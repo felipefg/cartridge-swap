@@ -7,7 +7,7 @@ import tempfile
 import json
 import base64
 
-from cartesi.abi import String, Bytes, Bytes32, UInt
+from cartesi.abi import String, Bytes, Bytes32, UInt, UInt128
 
 from cartesapp.storage import Entity, helpers, seed
 from cartesapp.context import get_metadata
@@ -32,59 +32,28 @@ class Cartridge(Entity):
     info            = helpers.Optional(helpers.Json, lazy=True)
     created_at      = helpers.Required(int)
     cover           = helpers.Optional(bytes, lazy=True)
+    base_price      = helpers.Required(int)
+    initial_supply  = helpers.Required(int)
+    smoothing_factor= helpers.Required(int)
+    exponent        = helpers.Required(int)
 
-@seed()
-def initialize_data():
-    try:
-        cartridge_example_file = open('misc/snake.sqfs','rb')
-        cartridge_example_data = cartridge_example_file.read()
-        cartridge_example_file.close()
-        create_cartridge(cartridge_example_data,msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94")
-        if AppSettings.rivemu_path is None: os.remove('misc/snake.sqfs')
-    except Exception as e:
-        LOGGER.warning(e)
 
-    try:
-        cartridge_example_file = open('misc/freedoom.sqfs','rb')
-        cartridge_example_data = cartridge_example_file.read()
-        cartridge_example_file.close()
-        create_cartridge(cartridge_example_data,msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94")
-        if AppSettings.rivemu_path is None: os.remove('misc/freedoom.sqfs')
-    except Exception as e:
-        LOGGER.warning(e)
-
-    try:
-        cartridge_example_file = open('misc/antcopter.sqfs','rb')
-        cartridge_example_data = cartridge_example_file.read()
-        cartridge_example_file.close()
-        create_cartridge(cartridge_example_data,msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94")
-        if AppSettings.rivemu_path is None: os.remove('misc/antcopter.sqfs')
-    except Exception as e:
-        LOGGER.warning(e)
-
-    try:
-        cartridge_example_file = open('misc/monky.sqfs','rb')
-        cartridge_example_data = cartridge_example_file.read()
-        cartridge_example_file.close()
-        create_cartridge(cartridge_example_data,msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94")
-        if AppSettings.rivemu_path is None: os.remove('misc/monky.sqfs')
-    except Exception as e:
-        LOGGER.warning(e)
-
-    # try:
-    #     cartridge_example_file = open('misc/2048.sqfs','rb')
-    #     cartridge_example_data = cartridge_example_file.read()
-    #     cartridge_example_file.close()
-    #     create_cartridge(cartridge_example_data,msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94")
-    #     if AppSettings.rivemu_path is None: os.remove('misc/2048.sqfs')
-    # except Exception as e:
-    #     LOGGER.warning(e)
-
+class CartridgeUser(Entity):
+    id              = helpers.Required(int, auto=True, index=True)
+    cartridge_id    = helpers.Required(str, 64)
+    user_address    = helpers.Required(str, 42)
+    helpers.PrimaryKey(cartridge_id, user_address)
 
 # Inputs
 
-class InserCartridgePayload(BaseModel):
+
+class InsertCartridgePayload(BaseModel):
+    base_price: UInt128
+    initial_supply: UInt128
+    smoothing_factor: UInt128
+    exponent: UInt128
     data: Bytes
+
 
 class RemoveCartridgePayload(BaseModel):
     id: Bytes32
@@ -146,12 +115,12 @@ class CartridgesOutput(BaseModel):
 # Mutations
 
 @mutation()
-def insert_cartridge(payload: InserCartridgePayload) -> bool:
+def insert_cartridge(payload: InsertCartridgePayload) -> bool:
     metadata = get_metadata()
-    
+
     LOGGER.info("Saving cartridge...")
     try:
-        cartridge_id = create_cartridge(payload.data,**get_metadata().dict())
+        cartridge_id = create_cartridge(payload,**get_metadata().dict())
     except Exception as e:
         msg = f"Couldn't insert cartridge: {e}"
         LOGGER.error(msg)
@@ -270,53 +239,60 @@ def cartridges(payload: CartridgesPayload) -> bool:
 def generate_cartridge_id(bin_data: bytes) -> str:
     return sha256(bin_data).hexdigest()
 
-def create_cartridge(cartridge_data,**metadata):
+
+def create_cartridge(cartridge_payload, **metadata):
+    cartridge_data = cartridge_payload.data
     data_hash = generate_cartridge_id(cartridge_data)
-    
+
     if helpers.count(c for c in Cartridge if c.id == data_hash) > 0:
-        raise Exception(f"Cartridge already exists")
+        raise Exception("Cartridge already exists")
 
     cartridges_path = riv_get_cartridges_path()
+    LOGGER.info(f"Got {cartridges_path=}")
     if not os.path.exists(cartridges_path):
         os.makedirs(cartridges_path)
-    cartridge_file = open(f"{cartridges_path}/{data_hash}",'wb')
+    LOGGER.info(f"Will write cartridge to {cartridges_path}/{data_hash}")
+    cartridge_file = open(f"{cartridges_path}/{data_hash}", 'wb')
     cartridge_file.write(cartridge_data)
     cartridge_file.close()
 
     cartridge_info = riv_get_cartridge_info(data_hash)
-    
+
     # validate info
     cartridge_info_json = json.loads(cartridge_info)
     Info(**cartridge_info_json)
 
     # check if cartridge runs
-    test_replay_file = open('misc/test.rivlog','rb')
+    test_replay_file = open('misc/test.rivlog', 'rb')
     test_replay = test_replay_file.read()
     test_replay_file.close()
-
     # TODO: allow one of theses tests
     outcard_raw, outhash, screenshot = replay_log(data_hash,test_replay,'',b'')
-    # riv_get_cartridge_outcard(data_hash,0,None,None)
 
+    LOGGER.info("So far so good")
     cartridge_cover = riv_get_cover(data_hash)
     if cartridge_cover is None or len(cartridge_cover) == 0:
-        #cartridge_cover = riv_get_cartridge_screenshot(data_hash,0)
         cartridge_cover = screenshot
 
     user_address = metadata.get('msg_sender')
     if user_address is not None: user_address = user_address.lower()
     c = Cartridge(
-        id = data_hash,
-        name = cartridge_info_json['name'],
-        user_address = user_address,
-        created_at = metadata.get('timestamp') or 0,
-        info = cartridge_info_json,
-        cover = cartridge_cover
+        id=data_hash,
+        name=cartridge_info_json['name'],
+        user_address=user_address,
+        created_at=metadata.get('timestamp') or 0,
+        info=cartridge_info_json,
+        cover=cartridge_cover,
+        base_price=cartridge_payload.base_price,
+        initial_supply=cartridge_payload.initial_supply,
+        smoothing_factor=cartridge_payload.smoothing_factor,
+        exponent=cartridge_payload.exponent
     )
 
     LOGGER.info(c)
 
     return data_hash
+
 
 def delete_cartridge(cartridge_id,**metadata):
     cartridge = Cartridge.get(lambda c: c.id == cartridge_id)

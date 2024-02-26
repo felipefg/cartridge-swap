@@ -1,5 +1,7 @@
 .sunodo
 .venv
+.vscode
+.env
 __pycache__
 cartridges
 cache
