@@ -71,5 +71,5 @@ def test_should_list_new_cartridge(dapp_client: TestClient):
     report = json.loads(report.decode('utf-8'))
     assert isinstance(report, dict)
     assert isinstance(report.get('data'), list)
-    assert len(report['data']) == 1
-    assert report['data'][0]['name'] == '2048'
+    assert len(report['data']) == 4
+    assert report['data'][3]['name'] == '2048'
