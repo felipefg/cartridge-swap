@@ -33,8 +33,8 @@ function CartridgeSelectButton({cartridge, index}:{cartridge:Cartridge, index:nu
                 `games-list-item`
             } value={cartridge.id} onClick={handleCartridgeSelection}>
 
-            <Image width={224} height={224}
-                style={{objectFit: "cover", width: "224px", height: "224px", imageRendering: "pixelated"}}
+            <Image width={256} height={192}
+                style={{objectFit: "contain", background: "black", width: "256px", height: "192px", imageRendering: "pixelated"}}
                 src={cartridge.cover? `data:image/png;base64,${cartridge.cover}`:"/logo.png"}/>
             <div className="flex items-center mt-1">
                 <div className="w-2/3 text-sm text-left">{cartridge.name}</div>
