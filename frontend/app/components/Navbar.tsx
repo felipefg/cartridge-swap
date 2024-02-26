@@ -1,16 +1,27 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from 'react'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
-import RivesLogo from './svg/RivesLogo';
+import DepositModal from "../components/DepositModal";
+import logo from '../../public/logo64px.png';
 
 function Navbar() {
     const pathname = usePathname();
     const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
     const [{ chains, connectedChain }, setChain] = useSetChain();
+    const [showDepositModal, setShowDepositModal] = useState(false);
     const [connectButtonTxt, setConnectButtonTxt] = useState("Connect");
+
+    const openDepositModal = () => {
+        setShowDepositModal(true);
+    }
+
+    const closeDepositModal = () => {
+        setShowDepositModal(false);
+    }
 
     useEffect(() => {
         if (!connectedChain) return;
@@ -36,19 +47,27 @@ function Navbar() {
 
     return (
         <header className='header'>
-            <Link href={"/"} className={`h-full grid grid-cols-1 items-center navbar-item ${pathname === "/" ? "link-active" : "" }`}>
-                <RivesLogo style={{width:100}}/>
+            <Link href={"/"} className={`h-full grid grid-cols-1 items-center`}>
+                <Image src={logo} alt='Cartridge Swap logo'/>
             </Link>
 
-            <a href={"/cartridges"} className={`invisible md:visible h-full grid grid-cols-1 items-center navbar-item ${pathname === "/cartridges" ? "link-active" : "" }`}>
-                <p>Cartridges</p>
-            </a>
+            <Link href={"/cartridges"} className={`invisible md:visible h-full grid grid-cols-1 items-center navbar-item ${pathname === "/cartridges" ? "link-active" : "" }`}>
+                Cartridges
+            </Link>
 
             <Link href={"/insert-cartridge"} className={`invisible md:visible h-full grid grid-cols-1 items-center navbar-item ${pathname === "/insert-cartridge" ? "link-active" : "" }`}>
-                Insert Cartridge
+                Upload Cartridge
             </Link>
 
             <div className='flex-1 flex justify-end'>
+                <div className='p-2'>
+                    <div>Balance</div>
+                    <div className="text-blue-700">
+                        <span>$20.00</span>
+                    </div>
+                </div>
+                { showDepositModal && <DepositModal onClose={closeDepositModal}/>}
+                <button className="btn btn-deposit" onClick={openDepositModal}>Deposit</button>
                 <button className='navbar-item' disabled={connecting}
                     onClick={() => (wallet ? disconnect(wallet) : connect())}
                 >

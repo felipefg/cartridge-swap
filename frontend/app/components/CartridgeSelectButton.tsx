@@ -5,15 +5,17 @@ import { selectedCartridgeContext } from '../cartridges/selectedCartridgeProvide
 import { CartridgeInfo as Cartridge } from "../backend-libs/app/ifaces"
 import { cartridgeInfo } from '../backend-libs/app/lib';
 import { envClient } from '../utils/clientEnv';
+import { fontPressStart2P } from '../utils/font';
+import Image from 'next/image';
 
 function CartridgeSelectButton({cartridge, index}:{cartridge:Cartridge, index:number}) {
     const {selectedCartridge, changeCartridge} = useContext(selectedCartridgeContext);
 
     useEffect(() => {
-        const initialSelection = async () => {
-           await handleCartridgeSelection({} as React.MouseEvent<HTMLElement>);
-        }
-        if (index == 0 && !selectedCartridge) initialSelection();
+        // const initialSelection = async () => {
+        //    await handleCartridgeSelection({} as React.MouseEvent<HTMLElement>);
+        // }
+        // if (index == 0 && !selectedCartridge) initialSelection();
     })
 
     const handleCartridgeSelection = async (e:React.MouseEvent<HTMLElement>) => {
@@ -24,14 +26,20 @@ function CartridgeSelectButton({cartridge, index}:{cartridge:Cartridge, index:nu
 	}
 
     return (
-        <button className={
+        <button hidden={!!selectedCartridge} className={
             selectedCartridge?.id==cartridge.id?
                 `games-list-item games-list-selected-item`
             :
                 `games-list-item`
             } value={cartridge.id} onClick={handleCartridgeSelection}>
 
-            {cartridge.name}
+            <Image width={224} height={224}
+                style={{objectFit: "cover", width: "224px", height: "224px", imageRendering: "pixelated"}}
+                src={cartridge.cover? `data:image/png;base64,${cartridge.cover}`:"/logo.png"}/>
+            <div className="flex items-center mt-1">
+                <div className="w-2/3 text-sm text-left">{cartridge.name}</div>
+                <div className="w-1/3 text-xs text-right text-blue-800">$20.00</div>
+            </div>
         </button>
     )
 }

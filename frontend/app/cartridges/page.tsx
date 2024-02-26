@@ -28,13 +28,11 @@ function listLoaderFallback() {
 export default async function Cartridges() {
     return (
       <main>
-		<section id="cartridges-section" className="second-section">
+		<section id="cartridges-section" className="second-section p-4">
+			<CartridgeInfo />
 			<Suspense fallback={listLoaderFallback()}>
 				<CartridgesList />
 			</Suspense>
-
-			<CartridgeInfo />
-
 		</section>
 
 		<Rivemu />

@@ -1,8 +1,7 @@
 import CartridgeSelectButton from './CartridgeSelectButton';
-import { cache } from 'react';
+import { cache, useContext } from 'react';
 import { cartridges as cartridgerequest} from "../backend-libs/app/lib";
 import { envClient } from '../utils/clientEnv';
-
 
 const getCartridges = cache(async () => {
 	const cartridges: any[] = (await cartridgerequest({},{decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL,cache:"force-cache"})).data;
@@ -14,17 +13,20 @@ async function CartridgesList() {
     let cartridges = await getCartridges();
 
     return (
-        <ul className='games-list'>
-            {
-                cartridges.map((cartridge: any, index: number) => {
-                    return (
-                        <li key={index}>
-                            <CartridgeSelectButton index={index} cartridge={cartridge} />
-                        </li>
-                    );
-                })
-            }
-        </ul>
+        <div
+         className="container mx-auto mt-8 mb-8" style={{maxWidth: "768px"}}>
+            <div className="grid grid-cols-3 gap-2">
+                {
+                    cartridges.map((cartridge: any, index: number) => {
+                        return (
+                            <div key={index}>
+                                <CartridgeSelectButton index={index} cartridge={cartridge} />
+                            </div>
+                        );
+                    })
+                }
+            </div>
+        </div>
     )
 }
 

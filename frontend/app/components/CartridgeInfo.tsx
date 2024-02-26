@@ -136,7 +136,7 @@ function scoreboardFallback() {
 }
 
 function CartridgeInfo() {
-    const {selectedCartridge, playCartridge, setGameplay, setReplay} = useContext(selectedCartridgeContext);
+    const {selectedCartridge, unselectCartridge, playCartridge, setGameplay, setReplay} = useContext(selectedCartridgeContext);
     const fileRef = useRef<HTMLInputElement | null>(null);
     const [{ wallet }, connect] = useConnectWallet();
     const { download } = useDownloader();
@@ -383,8 +383,9 @@ function CartridgeInfo() {
         )
     }
 
-    return (
-        <div className="flex flex-wrap justify-center h-full w-full">
+    return (<div>
+        <div className="flex flex-wrap justify-center h-full w-full mt-4">
+
             <div className="w-64 h-96">
                 <Canvas shadows camera={ {near: 0.1, far: 1000, position: [0,0,0]} }>
                     <Suspense fallback={<Loader />}>
@@ -414,6 +415,11 @@ function CartridgeInfo() {
 
                     </Suspense>
                 </Canvas>
+                <div className="flex">
+                    <button className="btn mt-2 mx-auto" onClick={() => {unselectCartridge()}}>
+                        BACK TO GAMES
+                    </button>
+                </div>
             </div>
 
             <div className="md:w-[512px] lg:w-[768px]">
@@ -442,8 +448,21 @@ function CartridgeInfo() {
                     }
                 </div>
 
+
+                {
+                    selectedCartridge.downloading?
+                        <button className="btn w-full mt-2 flex justify-center">
+                            <div className='w-5 h-5 border-2 rounded-full border-current border-r-transparent animate-spin'></div>
+                        </button>
+                    :
+                        <button className="btn w-full mt-2" onClick={() => {playCartridge()}}>
+                            PLAY
+                        </button>
+
+                }
+
                 <Tab.Group>
-                    <Tab.List className="game-option-tabs-header">
+                    <Tab.List className="game-option-tabs-header mt-2">
                         <Tab
                             className={({selected}) => {return selected?"game-tabs-option-selected":"game-tabs-option-unselected"}}
                             >
@@ -510,18 +529,6 @@ function CartridgeInfo() {
                 {/* <div>
                     <CartridgeDescription/>
                 </div> */}
-
-                {
-                    selectedCartridge.downloading?
-                        <button className="btn w-full mt-2 flex justify-center">
-                            <div className='w-5 h-5 border-2 rounded-full border-current border-r-transparent animate-spin'></div>
-                        </button>
-                    :
-                        <button className="btn w-full mt-2" onClick={() => {playCartridge()}}>
-                            PLAY
-                        </button>
-
-                }
             </div>
 
             {
@@ -540,7 +547,7 @@ function CartridgeInfo() {
             }
 
         </div>
-    );
+    </div>);
 }
 
 

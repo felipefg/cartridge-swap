@@ -242,11 +242,11 @@ body {
 
 
   .games-list {
-    @apply flex flex-wrap ms-[148px] mb-24;
+    @apply flex flex-wrap ms-[256px] mb-24;
   }
 
   .games-list-item {
-    @apply p-4 text-center bg-gray-400 hover:games-list-selected-item;
+    @apply p-2 bg-gray-400 hover:games-list-selected-item;
   }
 
   .games-list-selected-item {
@@ -315,6 +315,11 @@ body {
 
   .btn {
     @apply p-3 bg-[var(--highlight-text-end-hex)] border border-[var(--highlight-text-end-hex)] hover:bg-[rgb(var(--background-start-rgb))] hover:text-[var(--highlight-text-end-hex)];
+  }
+
+  .btn-deposit {
+    @apply p-3 bg-blue-500 text-white h-3/4 my-auto;
+    font-size: 10px;
   }
 
   .btn:disabled,

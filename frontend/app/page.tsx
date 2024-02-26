@@ -1,6 +1,5 @@
 import Image from 'next/image'
-import YoutubeVideo from "./components/youtubeVideo";
-import rivesLogo from '../public/rives64px.png';
+import logo from '../public/logo.png';
 
 
 export default function Home() {
@@ -8,12 +7,12 @@ export default function Home() {
     <main>
       <section id="presentation-section" className="first-section">
         <div className="flex space-x-2">
-          <Image src={rivesLogo} alt='RiVES logo'/>
+          <Image src={logo} alt='Cartridge Swap logo'/>
         </div>
 
         <div className=' max-w-[640px] text-center text-white'>
           <h2 className='mt-6 text-xl'>
-            Rives is the World Arcade
+            Cartridg Swap
           </h2>
 
           <p className="mt-6">
@@ -22,10 +21,6 @@ export default function Home() {
         </div>
 
         <div className='w-11/12 my-16 h-1 rainbow-background'></div>
-
-        <div className="flex items-center justify-center">
-          <YoutubeVideo videoId="7y22pdgGIE0" />
-        </div>
 
         <a className='mt-10 btn' href={"/cartridges"}>
           Start Playing

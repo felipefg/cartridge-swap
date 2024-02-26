@@ -6,10 +6,10 @@ import { CartridgeInfo as Cartridge } from "../backend-libs/app/ifaces"
 
 
 export const selectedCartridgeContext = createContext<{
-    selectedCartridge: PlayableCartridge|null, changeCartridge:Function, playCartridge:Function,
+    selectedCartridge: PlayableCartridge|null, changeCartridge:Function, unselectCartridge:Function, playCartridge:Function,
         setReplay:Function, setCartridgeData:Function, setGameParameters:Function,
         setGameplay:Function, stopCartridge:Function, setDownloadingCartridge:Function
-}>({selectedCartridge: null, changeCartridge: () => null, playCartridge: () => null,
+}>({selectedCartridge: null, changeCartridge: () => null, unselectCartridge: () => null, playCartridge: () => null,
     setReplay: () => null, setCartridgeData: () => null, setGameParameters: () => null,
     setGameplay: () => null, stopCartridge: () => null, setDownloadingCartridge: () => null});
 
@@ -60,6 +60,7 @@ export function SelectedCartridgeProvider({ children }:{ children: React.ReactNo
     }
 
     const setDownloadingCartridge = (download:boolean) => {
+
         if (selectedCartridge) {
             setSelectedCartridge({...selectedCartridge, downloading:download});
         }
@@ -73,12 +74,14 @@ export function SelectedCartridgeProvider({ children }:{ children: React.ReactNo
     }
 
     const setCartridgeData = (cartridgeData: Uint8Array) => {
+
         if (selectedCartridge) {
             setSelectedCartridge({...selectedCartridge, downloading:false, cartridgeData});
         }
     }
 
     const setGameParameters = (args: string, inCard: Uint8Array, scoreFunction: string) => {
+
         if (selectedCartridge) {
             setSelectedCartridge({...selectedCartridge, args, inCard, scoreFunction, gameplayLog:undefined, replay:undefined});
         }
@@ -96,8 +99,12 @@ export function SelectedCartridgeProvider({ children }:{ children: React.ReactNo
         }
     }
 
+    const unselectCartridge = () => {
+        setSelectedCartridge(null);
+    }
+
     return (
-        <selectedCartridgeContext.Provider value={ {selectedCartridge, changeCartridge, playCartridge,
+        <selectedCartridgeContext.Provider value={ {selectedCartridge, changeCartridge, unselectCartridge, playCartridge,
                 setReplay, setCartridgeData, setGameParameters,
                 setGameplay, stopCartridge, setDownloadingCartridge} }>
             { children }
