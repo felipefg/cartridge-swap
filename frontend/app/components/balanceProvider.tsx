@@ -45,9 +45,7 @@ export function BalanceProvider({ children }:{ children: React.ReactNode }) {
 
         try {
             const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
-            const receipt = await depositErc20(signer, envClient.DAPP_ADDR, envClient.TOKEN_ADDR, Math.floor(amount), {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;
-            if (receipt == undefined || receipt.events == undefined)
-                throw new Error("Couldn't send transaction");
+            await depositErc20(signer, envClient.DAPP_ADDR, envClient.TOKEN_ADDR, Math.floor(amount), {decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL});
             await updateWalletBalance();
         } catch (error) {
             await alert(error.message);

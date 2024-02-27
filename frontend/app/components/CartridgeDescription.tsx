@@ -26,9 +26,7 @@ function CartridgeDescription() {
         try {
             const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
             const payload: BuyCartridgePayload = {id: "0x"+selectedCartridge.id};
-            const receipt = await buyCartridge(signer, envClient.DAPP_ADDR, payload, {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;
-            if (receipt == undefined || receipt.events == undefined)
-                throw new Error("Couldn't send transaction");
+            const receipt = await buyCartridge(signer, envClient.DAPP_ADDR, payload, {sync:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL});
             await updateWalletBalance();
             await updateCartridge();
         } catch (error) {
@@ -40,9 +38,7 @@ function CartridgeDescription() {
         try {
             const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
             // const payload: SellCartridgePayload = {id: "0x"+selectedCartridge.id};
-            // const receipt = await sellCartridge(signer, envClient.DAPP_ADDR, inputData, {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;
-            if (receipt == undefined || receipt.events == undefined)
-                throw new Error("Couldn't send transaction");
+            // const receipt = await sellCartridge(signer, envClient.DAPP_ADDR, inputData, {decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL});
             await updateWalletBalance();
             await updateCartridge();
         } catch (error) {
@@ -86,7 +82,7 @@ function CartridgeDescription() {
                 </div>
 
                 <div>
-                    <h2 className='text-md text-gray-700 mt-4'>Total Supply</h2>
+                    <h2 className='text-md text-gray-700 mt-4'>Circulating Supply</h2>
                     <pre className={fontPressStart2P.className}>
                         {selectedCartridge.total_supply}
                     </pre>
