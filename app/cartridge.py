@@ -112,7 +112,7 @@ class CartridgeInfo(BaseModel):
     exponent: UInt128
     sell_price: UInt128
     buy_price: UInt128
-    total_sold: UInt128
+    total_supply: UInt128
 
 @output()
 class CartridgesOutput(BaseModel):
@@ -300,7 +300,7 @@ def cartridge_info(payload: CartridgePayload) -> bool:
         cartridge_dict['cover'] = base64.b64encode(cartridge_dict['cover'])
         cartridge_dict['sell_price'] = 33 * USDC_UNIT
         cartridge_dict['buy_price'] = 42 * USDC_UNIT
-        cartridge_dict['total_sold'] = 999
+        cartridge_dict['total_supply'] = 999
 
         out = CartridgeInfo.parse_obj(cartridge_dict)
         add_output(out)
@@ -341,7 +341,7 @@ def cartridges(payload: CartridgesPayload) -> bool:
         cartridge_dict['cover'] = base64.b64encode(cartridge_dict['cover'])
         cartridge_dict['sell_price'] = 33 * USDC_UNIT
         cartridge_dict['buy_price'] = 42 * USDC_UNIT
-        cartridge_dict['total_sold'] = 999
+        cartridge_dict['total_supply'] = 999
 
         dict_list_result.append(cartridge_dict)
 

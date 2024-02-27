@@ -65,7 +65,6 @@ def test_should_list_new_cartridge(dapp_client: TestClient):
     path = 'app/cartridges'
     inspect_payload = '0x' + path.encode('ascii').hex()
 
-
     dapp_client.send_inspect(hex_payload=inspect_payload)
 
     assert dapp_client.rollup.status
@@ -86,7 +85,7 @@ def test_should_list_new_cartridge(dapp_client: TestClient):
     assert isinstance(cartrigde_info['exponent'], int)
     assert isinstance(cartrigde_info['sell_price'], int)
     assert isinstance(cartrigde_info['buy_price'], int)
-    assert isinstance(cartrigde_info['total_sold'], int)
+    assert isinstance(cartrigde_info['total_supply'], int)
 
 
 @pytest.mark.order(after="test_should_insert_cartridge")
@@ -112,4 +111,4 @@ def test_should_retrieve_cartridge_metadata(dapp_client: TestClient):
     assert isinstance(report['exponent'], int)
     assert isinstance(report['sell_price'], int)
     assert isinstance(report['buy_price'], int)
-    assert isinstance(report['total_sold'], int)
+    assert isinstance(report['total_supply'], int)
