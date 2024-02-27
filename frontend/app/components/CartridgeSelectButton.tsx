@@ -38,7 +38,7 @@ function CartridgeSelectButton({cartridge, index}:{cartridge:Cartridge, index:nu
                 src={cartridge.cover? `data:image/png;base64,${cartridge.cover}`:"/logo.png"}/>
             <div className="flex items-center mt-1">
                 <div className="w-2/3 text-sm text-left">{cartridge.name}</div>
-                <div className="w-1/3 text-xs text-right text-blue-800">$20.00</div>
+                <div className="w-1/3 text-xs text-right text-blue-800">${(cartridge.buy_price / 1000000).toFixed(2)}</div>
             </div>
         </button>
     )

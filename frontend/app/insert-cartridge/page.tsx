@@ -1,16 +1,30 @@
 "use client"
 
+import { ContractReceipt, ethers } from "ethers";
 import React, { useContext, useEffect, useState } from 'react'
 import UploadIcon from "@mui/icons-material/Upload";
+import { RadioGroup } from '@headlessui/react'
+import CheckIcon from "@mui/icons-material/CheckCircle";
+import CircleIcon from "@mui/icons-material/Circle";
+import { useConnectWallet } from "@web3-onboard/react";
+import { InsertCartridgePayload } from '../backend-libs/app/ifaces';
+import { insertCartridge } from '../backend-libs/app/lib';
+import { envClient } from "../utils/clientEnv";
 
 export default function InsertCartridge() {
-  let [cartridgeSize, setCartridgeSize] = useState(null);
+  let [cartridgeData, setCartridgeData] = useState(null);
   let [cartridgeName, setCartridgeName] = useState(null);
-  const onCartridgeData = function(name: string, data: Uint8Array) {
-    setCartridgeSize(data.length / 1024);
+  let [basePrice, setBasePrice] = useState(10);
+  let [initialSupply, setInitialSupply] = useState(100);
+  let [curve, setCurve] = useState("standard");
+  const [{ wallet }, connect] = useConnectWallet();
+
+  function onCartridgeData(name: string, data: Uint8Array) {
+    setCartridgeData(data);
     setCartridgeName(name);
   }
-  const onFileChange = function(e:React.ChangeEvent<HTMLInputElement>) {
+
+  function onFileChange(e:React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files || e.target.files.length == 0) {
         return;
     }
@@ -33,6 +47,39 @@ export default function InsertCartridge() {
     reader.readAsArrayBuffer(file);
   }
 
+  async function uploadCartridge() {
+    if (!wallet) {
+        await alert("Connect first to upload a gameplay log.");
+        await connect();
+    }
+    if (!cartridgeData) {
+        await alert("Choose a cartridge file first.");
+        return;
+    }
+
+/*
+flatter smoothing=670 exponent=1500
+standard smoothing=1280 exponent=1700
+steeper smoothing=5000 exponent=2000
+*/
+
+    try {
+      const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
+      const inputData: InsertCartridgePayload = {
+          base_price: basePrice * 1000000,
+          initial_supply: initialSupply,
+          smoothing_factor: 1280,
+          exponent: 1700,
+          data: ethers.utils.hexlify(cartridgeData)
+      }
+      const receipt = await insertCartridge(signer, envClient.DAPP_ADDR, inputData, {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;
+      if (receipt == undefined || receipt.events == undefined)
+          throw new Error("Couldn't send transaction");
+    } catch (error) {
+        await alert(error.message);
+    }
+  }
+
   return (
     <main className="flex items-center justify-center">
       <section className="second-section">
@@ -48,8 +95,8 @@ export default function InsertCartridge() {
                 <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     <UploadIcon/>
-                    { cartridgeSize ?
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{cartridgeName}<br/>{cartridgeSize} KB</p>
+                    { cartridgeData ?
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{cartridgeName}<br/>{cartridgeData.length / 1024} KB</p>
                       :
                       <>
                         <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click </span> or drop file</p>
@@ -69,7 +116,10 @@ export default function InsertCartridge() {
                 </label>
               </div>
               <div className="md:w-2/3">
-                <input type="number" id="number-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm  block w-full p-2.5" placeholder="100.00" required />
+                <input type="number" id="number-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm  block w-full p-2.5" required
+                  value={basePrice}
+                  onChange={e => setBasePrice(e.target.value)}/>
+
               </div>
             </div>
 
@@ -80,28 +130,45 @@ export default function InsertCartridge() {
                 </label>
               </div>
               <div className="md:w-2/3">
-                <input type="number" id="number-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm  block w-full p-2.5" placeholder="100" required />
+                <input type="number" id="number-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm  block w-full p-2.5" required
+                  value={initialSupply}
+                  onChange={e => setInitialSupply(e.target.value)}/>
               </div>
             </div>
 
-            <div className="md:flex md:items-center mb-6">
+            <RadioGroup value={curve} onChange={setCurve} className="md:flex md:items-center mb-6">
               <div className="md:w-1/3">
-                <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                  Bonding Curve
-                </label>
+                <RadioGroup.Label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">Bonding Curve</RadioGroup.Label>
               </div>
               <div className="relative">
-                <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                  <option>Normal</option>
-                  <option>Flatter</option>
-                  <option>Steeper</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                </div>
+                <RadioGroup.Option value="standard">
+                  {({ checked }) => (
+                    <div className="flex items-center mb-4">
+                      { checked ? <CheckIcon className="mr-2" /> : <CircleIcon className="mr-2" /> }
+                      <span className={checked ? 'text-blue-500' : ''}>Standard</span>
+                    </div>
+                  )}
+                </RadioGroup.Option>
+                <RadioGroup.Option value="flatter">
+                  {({ checked }) => (
+                    <div className="flex items-center mb-4">
+                      { checked ? <CheckIcon className="mr-2" /> : <CircleIcon className="mr-2" /> }
+                      <span className={checked ? 'text-blue-500' : ''}>Flatter</span>
+                    </div>
+                  )}
+                </RadioGroup.Option>
+                <RadioGroup.Option value="steeper">
+                  {({ checked }) => (
+                    <div className="flex items-center mb-4">
+                      { checked ? <CheckIcon className="mr-2" /> : <CircleIcon className="mr-2" /> }
+                      <span className={checked ? 'text-blue-500' : ''}>Steeper</span>
+                    </div>
+                  )}
+                </RadioGroup.Option>
               </div>
-            </div>
+            </RadioGroup>
 
+{/*
             <div className="md:flex md:items-center mb-6">
               <div className="md:w-1/3">
                 <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
@@ -112,9 +179,10 @@ export default function InsertCartridge() {
                 <div className="appearance-none border-2 border-blue-500 w-full py-2 px-4 text-blue-400">$100</div>
               </div>
             </div>
+            */}
           </div>
 
-          <button className="btn mt-5 w-48">
+          <button className="btn w-48" onClick={uploadCartridge}>
             Upload Cartridge
           </button>
         </div>

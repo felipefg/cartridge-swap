@@ -23,7 +23,7 @@ function CartridgeDescription() {
                 <div>
                     <h2 className='text-lg text-gray-700 mt-4'>Buy Price</h2>
                     <pre className={fontPressStart2P.className}>
-                        <span className="text-lg text-blue-700">$20.00</span>
+                        <span className="text-lg text-blue-700">${(selectedCartridge.buy_price / 1000000).toFixed(2)}</span>
                         <button className="btn w-1/3 ml-1">
                             BUY
                         </button>
@@ -33,7 +33,7 @@ function CartridgeDescription() {
                 <div>
                     <h2 className='text-lg text-gray-700 mt-4'>Sell Price</h2>
                     <pre className={fontPressStart2P.className}>
-                        <span className="text-lg text-blue-700">$10.00</span>
+                        <span className="text-lg text-blue-700">${(selectedCartridge.sell_price / 1000000).toFixed(2)}</span>
                         <button className="btn w-1/3 ml-1">
                             SELL
                         </button>
@@ -43,14 +43,14 @@ function CartridgeDescription() {
                 <div>
                     <h2 className='text-md text-gray-700 mt-4'>Initial Supply</h2>
                     <pre className={fontPressStart2P.className}>
-                        0/100 (0%)
+                        {selectedCartridge.initial_supply}
                     </pre>
                 </div>
 
                 <div>
                     <h2 className='text-md text-gray-700 mt-4'>Total Supply</h2>
                     <pre className={fontPressStart2P.className}>
-                        0
+                        {selectedCartridge.total_supply}
                     </pre>
                 </div>
             </div>
