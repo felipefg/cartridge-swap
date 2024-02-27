@@ -138,7 +138,7 @@ steeper smoothing=5000 exponent=2000
 
             <RadioGroup value={curve} onChange={setCurve} className="md:flex md:items-center mb-6">
               <div className="md:w-1/3">
-                <RadioGroup.Label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">Bonding Curve</RadioGroup.Label>
+                <RadioGroup.Label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">Extra Supply Bonding Curve</RadioGroup.Label>
               </div>
               <div className="relative">
                 <RadioGroup.Option value="standard">

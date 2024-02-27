@@ -166,7 +166,7 @@ export async function balance(
     inputData: ifaces.BalancePayload,
     options?:QueryOptions
 ):Promise<InspectReport|any> {
-    const route = 'wallet/balance/{address}';
+    const route = 'wallet/balance/'+inputData.address;
     const data: BalancePayload = new BalancePayload(inputData);
     const output: InspectReport = await genericInspect<ifaces.BalancePayload>(data,route,options);
     if (options?.decode) { return decodeToModel(output,options.decodeModel || "json"); }

@@ -1,9 +1,43 @@
 "use client"
 
-import { useState } from 'react'
+import { ContractReceipt, ethers } from "ethers";
+import React, { useState } from 'react'
+import { useConnectWallet } from "@web3-onboard/react";
+import { BalancePayload } from '../backend-libs/app/ifaces';
+import { depositErc20, balance } from '../backend-libs/wallet/lib';
+import { envClient } from "../utils/clientEnv";
 
 function DepositModal({onClose}:{onClose():void}) {
-    const [amount, setAmount] = useState('');
+    const [{ wallet }, connect] = useConnectWallet();
+    const [amount, setAmount] = useState(10);
+
+    async function getBalance() {
+        const input: BalancePayload = {address: wallet.accounts[0].address.toLowerCase()}
+        const report = await balance(input, {decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL});
+        if (report.erc20 && report.erc20[envClient.TOKEN_ADDR.toLowerCase()]) {
+            return report.erc20[envClient.TOKEN_ADDR.toLowerCase()];
+        }
+        return 0;
+    }
+
+    async function deposit() {
+        if (!wallet) {
+            await alert("Connect first to upload a gameplay log.");
+            await connect();
+        }
+
+        try {
+            const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
+            const receipt = await depositErc20(signer, envClient.DAPP_ADDR, envClient.TOKEN_ADDR, Math.floor(amount * 100000), {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;
+            if (receipt == undefined || receipt.events == undefined)
+                throw new Error("Couldn't send transaction");
+        } catch (error) {
+            await alert(error.message);
+        }
+
+        onClose();
+    }
+
     return (<div
                 className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-30 outline-none focus:outline-none"
             >
@@ -21,7 +55,7 @@ function DepositModal({onClose}:{onClose():void}) {
                                     <legend>
                                         Amount
                                     </legend>
-                                    <input type="text" value={amount} onChange={e => setAmount(e.target.value)} />
+                                    <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />
                                 </div>
                             </fieldset>
                             <div className="flex items-center justify-end pb-2 pr-6">
@@ -35,6 +69,7 @@ function DepositModal({onClose}:{onClose():void}) {
                                 <button
                                 className={`bg-emerald-500 text-white font-bold uppercase text-sm px-6 py-2 ml-1 border border-emerald-500 hover:text-emerald-500 hover:bg-transparent`}
                                 type="button"
+                                onClick={deposit}
                                 >
                                     Submit
                                 </button>

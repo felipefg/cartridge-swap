@@ -63,6 +63,7 @@ RPC_URL=http://127.0.0.1:8545
 DAPP_ADDRESS=0x70ac08179605AF2D9e75782b8DEcDD3c22aA4D0C
 BITMASK_ADDRESS=0xF5B2d8c81cDE4D6238bBf20D3D77DB37df13f735
 forge create --constructor-args $DAPP_ADDRESS --rpc-url "$RPC_URL" --mnemonic "$MNEMONIC" --json contracts/RivesScoreNFT.sol:RivesScoreNFT --libraries node_modules/@cartesi/util/contracts/Bitmask.sol:Bitmask:$BITMASK_ADDRESS
+forge create --rpc-url "$RPC_URL" --mnemonic "$MNEMONIC" --json contracts/DummyToken.sol:DummyToken
 ```
 
 Finally, run the frontend
