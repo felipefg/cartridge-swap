@@ -64,6 +64,8 @@ def test_should_insert_cartridge(
 def test_should_list_new_cartridge(dapp_client: TestClient):
     path = 'app/cartridges'
     inspect_payload = '0x' + path.encode('ascii').hex()
+
+
     dapp_client.send_inspect(hex_payload=inspect_payload)
 
     assert dapp_client.rollup.status
@@ -85,3 +87,29 @@ def test_should_list_new_cartridge(dapp_client: TestClient):
     assert isinstance(cartrigde_info['sell_price'], int)
     assert isinstance(cartrigde_info['buy_price'], int)
     assert isinstance(cartrigde_info['total_sold'], int)
+
+
+@pytest.mark.order(after="test_should_insert_cartridge")
+def test_should_retrieve_cartridge_metadata(dapp_client: TestClient):
+
+    breakout_id = (
+        '92d813d07db2607710ffd9b12a737a80c3e682f34119b7f4e0e2890c4b300672'
+    )
+    path = f'app/cartridge_info?id={breakout_id}'
+    inspect_payload = '0x' + path.encode('ascii').hex()
+    dapp_client.send_inspect(hex_payload=inspect_payload)
+
+    assert dapp_client.rollup.status
+
+    report = dapp_client.rollup.reports[-1]['data']['payload']
+    report = bytes.fromhex(report[2:])
+    report = json.loads(report.decode('utf-8'))
+    assert isinstance(report, dict)
+
+    assert isinstance(report['base_price'], int)
+    assert isinstance(report['initial_supply'], int)
+    assert isinstance(report['smoothing_factor'], int)
+    assert isinstance(report['exponent'], int)
+    assert isinstance(report['sell_price'], int)
+    assert isinstance(report['buy_price'], int)
+    assert isinstance(report['total_sold'], int)

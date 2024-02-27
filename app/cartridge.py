@@ -298,6 +298,10 @@ def cartridge_info(payload: CartridgePayload) -> bool:
     if cartridge is not None:
         cartridge_dict = cartridge.to_dict(with_lazy=True)
         cartridge_dict['cover'] = base64.b64encode(cartridge_dict['cover'])
+        cartridge_dict['sell_price'] = 33 * USDC_UNIT
+        cartridge_dict['buy_price'] = 42 * USDC_UNIT
+        cartridge_dict['total_sold'] = 999
+
         out = CartridgeInfo.parse_obj(cartridge_dict)
         add_output(out)
     else:
