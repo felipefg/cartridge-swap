@@ -51,27 +51,33 @@ export default function InsertCartridge() {
 
   async function uploadCartridge() {
     if (!wallet) {
-        await alert("Connect first to upload a gameplay log.");
+        await alert("Connect first to upload a cartridge.");
         await connect();
+        return;
     }
     if (!cartridgeData) {
         await alert("Choose a cartridge file first.");
         return;
     }
 
-    /*
-    flatter smoothing=670 exponent=1500
-    standard smoothing=1280 exponent=1700
-    steeper smoothing=5000 exponent=2000
-    */
-
     try {
+      let smoothingFactor = 1280;
+      let exponent = 1700;
+      if (curve == "flatter") {
+        smoothingFactor = 670;
+        exponent = 1500;
+      } else if (curve == "steeper") {
+        smoothingFactor = 5000;
+        exponent = 2000;
+
+      }
+
       const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
       const inputData: InsertCartridgePayload = {
           base_price: basePrice * 1000000,
           initial_supply: initialSupply * 1,
-          smoothing_factor: 1280,
-          exponent: 1700,
+          smoothing_factor: smoothingFactor,
+          exponent: exponent,
           data: ethers.utils.hexlify(cartridgeData)
       }
       const receipt = await insertCartridge(signer, envClient.DAPP_ADDR, inputData, {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;

@@ -40,6 +40,7 @@ export function BalanceProvider({ children }:{ children: React.ReactNode }) {
         if (!wallet) {
             await alert("Connect first to upload a gameplay log.");
             await connect();
+            return;
         }
 
         try {
