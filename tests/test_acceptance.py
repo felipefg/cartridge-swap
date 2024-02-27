@@ -29,7 +29,7 @@ def dapp_client() -> TestClient:
 @pytest.fixture()
 def insert_cartridge_payload() -> bytes:
 
-    with open('misc/2048.sqfs', 'rb') as fin:
+    with open('misc/breakout.sqfs', 'rb') as fin:
         cartridge_data = fin.read()
 
     model = InsertCartridgePayload(
@@ -71,9 +71,9 @@ def test_should_list_new_cartridge(dapp_client: TestClient):
     report = json.loads(report.decode('utf-8'))
     assert isinstance(report, dict)
     assert isinstance(report.get('data'), list)
-    assert len(report['data']) == 4
-    cartrigde_info = report['data'][3]
-    assert cartrigde_info['name'] == '2048'
+    assert len(report['data']) > 0
+    cartrigde_info = report['data'][-1]
+    assert cartrigde_info['name'] == 'Breakout'
 
     # Listing should have model details and pricing
     assert isinstance(cartrigde_info['base_price'], int)

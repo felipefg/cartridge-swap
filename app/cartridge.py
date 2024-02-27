@@ -146,25 +146,25 @@ def initialize_data():
     except Exception as e:
         LOGGER.warning(e)
 
-    try:
-        cartridge_example_file = open('misc/freedoom.sqfs', 'rb')
-        cartridge_example_data = cartridge_example_file.read()
-        cartridge_example_file.close()
-        cartridge_payload = InsertCartridgePayload(
-            base_price=10,
-            initial_supply=1000,
-            smoothing_factor=50,
-            exponent=1500,
-            data=cartridge_example_data
-        )
-        create_cartridge(
-            cartridge_payload,
-            msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94"
-        )
-        if AppSettings.rivemu_path is None:
-            os.remove('misc/freedoom.sqfs')
-    except Exception as e:
-        LOGGER.warning(e)
+    # try:
+    #     cartridge_example_file = open('misc/freedoom.sqfs', 'rb')
+    #     cartridge_example_data = cartridge_example_file.read()
+    #     cartridge_example_file.close()
+    #     cartridge_payload = InsertCartridgePayload(
+    #         base_price=10,
+    #         initial_supply=1000,
+    #         smoothing_factor=50,
+    #         exponent=1500,
+    #         data=cartridge_example_data
+    #     )
+    #     create_cartridge(
+    #         cartridge_payload,
+    #         msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94"
+    #     )
+    #     if AppSettings.rivemu_path is None:
+    #         os.remove('misc/freedoom.sqfs')
+    # except Exception as e:
+    #     LOGGER.warning(e)
 
     try:
         cartridge_example_file = open('misc/antcopter.sqfs', 'rb')
