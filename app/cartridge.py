@@ -13,6 +13,7 @@ from cartesapp.storage import Entity, helpers, seed
 from cartesapp.context import get_metadata
 from cartesapp.input import query, mutation
 from cartesapp.output import event, output, add_output, emit_event, contract_call
+from cartesapp.wallet import dapp_wallet
 
 from .riv import riv_get_cartridge_info, riv_get_cartridge_screenshot, riv_get_cartridges_path, riv_get_cover, riv_get_cartridge_outcard, replay_log
 from .settings import AppSettings
@@ -20,7 +21,7 @@ from .bonding_curve import get_prices
 
 LOGGER = logging.getLogger(__name__)
 USDC_UNIT = int(1e6)
-
+ERC20_TOKEN_ADDRESS = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
 
 ###
 # Model
@@ -41,7 +42,6 @@ class Cartridge(Entity):
 
 
 class CartridgeUser(Entity):
-    id              = helpers.Required(int, auto=True, index=True)
     cartridge       = helpers.Required(Cartridge)
     user_address    = helpers.Required(str, 42)
     helpers.PrimaryKey(cartridge, user_address)
@@ -61,6 +61,11 @@ class InsertCartridgePayload(BaseModel):
 
 class RemoveCartridgePayload(BaseModel):
     id: Bytes32
+
+
+class BuyCartridgePayload(BaseModel):
+    id: Bytes32
+
 
 class CartridgePayload(BaseModel):
     id: String
@@ -274,6 +279,69 @@ def remove_cartridge(payload: RemoveCartridgePayload) -> bool:
 
     return True
 
+
+def _get_erc20_balance(wallet_addr: str, contract_addr: str) -> int:
+    entry = (
+        helpers
+        .select(e for e in dapp_wallet.Erc20
+                if e.address == contract_addr.lower()
+                and e.wallet.owner == wallet_addr.lower())
+        .first()
+    )
+
+    if entry is None:
+        return 0
+
+    amount_str = entry.amount
+    if amount_str.startswith('0x'):
+        amount_str = amount_str[2:]
+    amount = int(amount_str, 16)
+    return amount
+
+
+@mutation()
+def buy_cartridge(payload: BuyCartridgePayload) -> bool:
+    metadata = get_metadata()
+    buyer = metadata.msg_sender
+    cartridge_id = payload.id.hex()
+    LOGGER.info('User %s wants to buy cartridge %s', buyer, cartridge_id)
+
+    # Get cartridge
+    cartridge = (
+        helpers.select(c for c in Cartridge if c.id == cartridge_id)
+        .first()
+    )
+
+    if cartridge is None:
+        LOGGER.info('Cartridge %s not found. Refusing tx.', cartridge_id)
+        return False
+
+    sell, buy, supply = get_prices_supply_for_cartridge(cartridge)
+
+    if buy == 0:
+        LOGGER.info('Cartridge %s has zero buy price. Refusing tx.',
+                    cartridge_id)
+        return False
+
+    balance = _get_erc20_balance(buyer.lower(), ERC20_TOKEN_ADDRESS)
+
+    if balance < buy:
+        LOGGER.info('User balance (%i) is lower than buy price (%i) for '
+                    'cartridge %s. Refusing tx.', balance, buy, cartridge_id)
+        return False
+
+    LOGGER.debug('User balance=%i buy=%i', balance, buy)
+
+    # TODO: Properly split between game developer and foundation
+    dapp_wallet.transfer_erc20(
+        token=ERC20_TOKEN_ADDRESS,
+        sender=buyer,
+        receiver=cartridge.user_address,
+        amount=buy)
+
+    cartridge.users.create(user_address=buyer)
+
+    return True
 
 ###
 # Queries
