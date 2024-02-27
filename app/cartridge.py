@@ -315,21 +315,29 @@ def buy_cartridge(payload: BuyCartridgePayload) -> bool:
     )
 
     if cartridge is None:
-        LOGGER.info('Cartridge %s not found. Refusing tx.', cartridge_id)
+        msg = f'Cartridge {cartridge_id} not found. Refusing tx'
+        LOGGER.info(msg)
+        add_output(msg, tags=['error'])
         return False
 
     sell, buy, supply = get_prices_supply_for_cartridge(cartridge)
 
     if buy == 0:
-        LOGGER.info('Cartridge %s has zero buy price. Refusing tx.',
-                    cartridge_id)
+        msg = f'Cartridge {cartridge_id} has zero buy price. Refusing tx'
+        LOGGER.info(msg)
+        add_output(msg, tags=['error'])
         return False
 
     balance = _get_erc20_balance(buyer.lower(), ERC20_TOKEN_ADDRESS)
 
     if balance < buy:
-        LOGGER.info('User balance (%i) is lower than buy price (%i) for '
-                    'cartridge %s. Refusing tx.', balance, buy, cartridge_id)
+        msg = (
+            f'User ({buyer.lower()}) balance ({balance}) is lower than buy '
+            f'price ({buy}) for cartridge {cartridge.name} ({cartridge_id}). '
+            'Refusing tx.'
+        )
+        LOGGER.info(msg)
+        add_output(msg, tags=['error'])
         return False
 
     LOGGER.debug('User balance=%i buy=%i', balance, buy)
