@@ -15,6 +15,8 @@ from app.cartridge import InsertCartridgePayload
 import logging
 logger = logging.getLogger(__name__)
 
+USDC_UNIT = int(1e6)
+
 
 @pytest.fixture(scope='session')
 def dapp_client() -> TestClient:
@@ -33,7 +35,7 @@ def insert_cartridge_payload() -> bytes:
         cartridge_data = fin.read()
 
     model = InsertCartridgePayload(
-        base_price=100,
+        base_price=50 * USDC_UNIT,
         initial_supply=1000,
         smoothing_factor=30,
         exponent=150,
@@ -80,5 +82,6 @@ def test_should_list_new_cartridge(dapp_client: TestClient):
     assert isinstance(cartrigde_info['initial_supply'], int)
     assert isinstance(cartrigde_info['smoothing_factor'], int)
     assert isinstance(cartrigde_info['exponent'], int)
-    assert isinstance(cartrigde_info['price'], int)
+    assert isinstance(cartrigde_info['sell_price'], int)
+    assert isinstance(cartrigde_info['buy_price'], int)
     assert isinstance(cartrigde_info['total_sold'], int)

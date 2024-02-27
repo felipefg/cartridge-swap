@@ -18,7 +18,7 @@ from .riv import riv_get_cartridge_info, riv_get_cartridge_screenshot, riv_get_c
 from .settings import AppSettings
 
 LOGGER = logging.getLogger(__name__)
-
+USDC_UNIT = int(1e6)
 
 
 ###
@@ -110,7 +110,8 @@ class CartridgeInfo(BaseModel):
     initial_supply: UInt128
     smoothing_factor: UInt128
     exponent: UInt128
-    price: UInt128
+    sell_price: UInt128
+    buy_price: UInt128
     total_sold: UInt128
 
 @output()
@@ -131,7 +132,7 @@ def initialize_data():
         cartridge_example_data = cartridge_example_file.read()
         cartridge_example_file.close()
         cartridge_payload = InsertCartridgePayload(
-            base_price=10,
+            base_price=10 * USDC_UNIT,
             initial_supply=1000,
             smoothing_factor=50,
             exponent=1500,
@@ -170,7 +171,7 @@ def initialize_data():
         cartridge_example_file = open('misc/antcopter.sqfs', 'rb')
         cartridge_example_data = cartridge_example_file.read()
         cartridge_payload = InsertCartridgePayload(
-            base_price=10,
+            base_price=30 * USDC_UNIT,
             initial_supply=1000,
             smoothing_factor=50,
             exponent=1500,
@@ -189,7 +190,7 @@ def initialize_data():
         cartridge_example_file = open('misc/monky.sqfs', 'rb')
         cartridge_example_data = cartridge_example_file.read()
         cartridge_payload = InsertCartridgePayload(
-            base_price=10,
+            base_price=25 * USDC_UNIT,
             initial_supply=1000,
             smoothing_factor=50,
             exponent=1500,
@@ -208,7 +209,7 @@ def initialize_data():
         cartridge_example_file = open('misc/2048.sqfs', 'rb')
         cartridge_example_data = cartridge_example_file.read()
         cartridge_payload = InsertCartridgePayload(
-            base_price=10,
+            base_price=15 * USDC_UNIT,
             initial_supply=1000,
             smoothing_factor=50,
             exponent=1500,
@@ -334,7 +335,8 @@ def cartridges(payload: CartridgesPayload) -> bool:
     for cartridge in cartridges:
         cartridge_dict = cartridge.to_dict(with_lazy=True)
         cartridge_dict['cover'] = base64.b64encode(cartridge_dict['cover'])
-        cartridge_dict['price'] = 42
+        cartridge_dict['sell_price'] = 33 * USDC_UNIT
+        cartridge_dict['buy_price'] = 42 * USDC_UNIT
         cartridge_dict['total_sold'] = 999
 
         dict_list_result.append(cartridge_dict)
