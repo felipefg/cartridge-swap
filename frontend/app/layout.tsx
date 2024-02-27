@@ -3,6 +3,7 @@ import './globals.css'
 import Navbar from '@/app/components/Navbar';
 import {Web3OnboardProviderClient} from './utils/web3OnboardProvider';
 import { fontPressStart2P } from './utils/font';
+import { BalanceProvider } from './components/balanceProvider';
 
 export const metadata: Metadata = {
   title: 'Cartridge Swap',
@@ -18,10 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en-US">
       <Web3OnboardProviderClient>
-        <body className={fontPressStart2P.className}>
-          <Navbar></Navbar>
-          {children}
-        </body>
+        <BalanceProvider>
+          <body className={fontPressStart2P.className}>
+            <Navbar></Navbar>
+            {children}
+          </body>
+        </BalanceProvider>
       </Web3OnboardProviderClient>
     </html>
   )

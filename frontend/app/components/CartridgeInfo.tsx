@@ -158,8 +158,7 @@ function CartridgeInfo() {
     // }, [submitLogStatus])
 
     useEffect(() => {
-
-        console.log("gameplayLog",selectedCartridge?.gameplayLog?.length);
+        // console.log("gameplayLog",selectedCartridge?.gameplayLog?.length);
         if (selectedCartridge?.gameplayLog) submitLog();
     }, [selectedCartridge?.gameplayLog])
 

@@ -1,17 +1,12 @@
 "use client"
 
-import { ContractReceipt, ethers } from "ethers";
-import React, { useState } from 'react'
-import { useConnectWallet } from "@web3-onboard/react";
-import { BalancePayload } from '../backend-libs/app/ifaces';
-import { depositErc20, balance } from '../backend-libs/wallet/lib';
-import { envClient } from "../utils/clientEnv";
+import React, { useState, useContext } from 'react'
+import { balanceContext } from './balanceProvider';
 
 function DepositModal() {
     const [showDepositModal, setShowDepositModal] = useState(false);
-    const [{ wallet }, connect] = useConnectWallet();
     const [amount, setAmount] = useState(10);
-    const [tokenBalance, setTokenBalance] = useState(0);
+    const {walletBalance, updateWalletBalance, depositWalletBalance} = useContext(balanceContext);
 
     const openDepositModal = () => {
         setShowDepositModal(true);
@@ -21,42 +16,24 @@ function DepositModal() {
         setShowDepositModal(false);
     }
 
-    async function getBalance() {
-        const input: BalancePayload = {address: wallet.accounts[0].address.toLowerCase()}
-        const report = await balance(input, {decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL});
-        if (report.erc20 && report.erc20[envClient.TOKEN_ADDR.toLowerCase()]) {
-            return report.erc20[envClient.TOKEN_ADDR.toLowerCase()];
-        }
-        return 0;
-    }
-
     async function deposit() {
-        if (!wallet) {
-            await alert("Connect first to upload a gameplay log.");
-            await connect();
-        }
-
-        try {
-            const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
-            const receipt = await depositErc20(signer, envClient.DAPP_ADDR, envClient.TOKEN_ADDR, Math.floor(amount * 1000000), {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;
-            if (receipt == undefined || receipt.events == undefined)
-                throw new Error("Couldn't send transaction");
-            setTokenBalance(await getBalance());
-        } catch (error) {
-            await alert(error.message);
-        }
-
+        await depositWalletBalance(amount * 1000000);
         closeDepositModal();
     }
 
+    updateWalletBalance();
+
     return (<>
+        { walletBalance != null && <>
                 <div className='p-2'>
                     <div>Balance</div>
                     <div className="text-blue-700">
-                        <span>${(tokenBalance / 1000000).toFixed(2)}</span>
+                        <span>${(walletBalance / 1000000).toFixed(2)}</span>
                     </div>
                 </div>
                 <button className="btn btn-deposit" onClick={openDepositModal}>Deposit</button>
+            </>
+        }
         { showDepositModal &&
         <div
                 className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-30 outline-none focus:outline-none"

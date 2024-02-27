@@ -1,7 +1,7 @@
 "use client"
 
 import { ContractReceipt, ethers } from "ethers";
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState} from 'react'
 import UploadIcon from "@mui/icons-material/Upload";
 import { RadioGroup } from '@headlessui/react'
 import CheckIcon from "@mui/icons-material/CheckCircle";
@@ -10,6 +10,7 @@ import { useConnectWallet } from "@web3-onboard/react";
 import { InsertCartridgePayload } from '../backend-libs/app/ifaces';
 import { insertCartridge } from '../backend-libs/app/lib';
 import { envClient } from "../utils/clientEnv";
+import { balanceContext } from '../components/balanceProvider';
 
 export default function InsertCartridge() {
   let [cartridgeData, setCartridgeData] = useState(null);
@@ -18,6 +19,7 @@ export default function InsertCartridge() {
   let [initialSupply, setInitialSupply] = useState(100);
   let [curve, setCurve] = useState("standard");
   const [{ wallet }, connect] = useConnectWallet();
+  const {walletBalance, updateWalletBalance} = useContext(balanceContext);
 
   function onCartridgeData(name: string, data: Uint8Array) {
     setCartridgeData(data);
@@ -57,17 +59,17 @@ export default function InsertCartridge() {
         return;
     }
 
-/*
-flatter smoothing=670 exponent=1500
-standard smoothing=1280 exponent=1700
-steeper smoothing=5000 exponent=2000
-*/
+    /*
+    flatter smoothing=670 exponent=1500
+    standard smoothing=1280 exponent=1700
+    steeper smoothing=5000 exponent=2000
+    */
 
     try {
       const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
       const inputData: InsertCartridgePayload = {
           base_price: basePrice * 1000000,
-          initial_supply: initialSupply,
+          initial_supply: initialSupply * 1,
           smoothing_factor: 1280,
           exponent: 1700,
           data: ethers.utils.hexlify(cartridgeData)
@@ -78,6 +80,8 @@ steeper smoothing=5000 exponent=2000
     } catch (error) {
         await alert(error.message);
     }
+    await updateWalletBalance();
+    window.location = '/cartridges';
   }
 
   return (

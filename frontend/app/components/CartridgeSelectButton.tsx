@@ -34,6 +34,7 @@ function CartridgeSelectButton({cartridge, index}:{cartridge:Cartridge, index:nu
             } value={cartridge.id} onClick={handleCartridgeSelection}>
 
             <Image width={0} height={0}
+                alt="Cartridge Screenshot"
                 style={{objectFit: "contain", background: "black", width: "256px", height: "192px", imageRendering: "pixelated"}}
                 src={cartridge.cover? `data:image/png;base64,${cartridge.cover}`:"/logo.png"}/>
             <div className="flex items-center mt-1">

@@ -6,10 +6,11 @@ import { CartridgeInfo as Cartridge } from "../backend-libs/app/ifaces"
 
 
 export const selectedCartridgeContext = createContext<{
-    selectedCartridge: PlayableCartridge|null, changeCartridge:Function, unselectCartridge:Function, playCartridge:Function,
+    selectedCartridge: PlayableCartridge|null,
+    walletBalance: number|null, setWalletBalance:Function, changeCartridge:Function, unselectCartridge:Function, playCartridge:Function,
         setReplay:Function, setCartridgeData:Function, setGameParameters:Function,
         setGameplay:Function, stopCartridge:Function, setDownloadingCartridge:Function
-}>({selectedCartridge: null, changeCartridge: () => null, unselectCartridge: () => null, playCartridge: () => null,
+}>({selectedCartridge: null, walletBalance: null, setWalletBalance: () => null, changeCartridge: () => null, unselectCartridge: () => null, playCartridge: () => null,
     setReplay: () => null, setCartridgeData: () => null, setGameParameters: () => null,
     setGameplay: () => null, stopCartridge: () => null, setDownloadingCartridge: () => null});
 
@@ -37,6 +38,7 @@ export interface PlayableCartridge extends Cartridge {
 
 export function SelectedCartridgeProvider({ children }:{ children: React.ReactNode }) {
     const [selectedCartridge, setSelectedCartridge] = useState<PlayableCartridge|null>(null);
+    const [walletBalance, setWalletBalance] = useState<number|null>(null);
 
     const changeCartridge = (cartridge:Cartridge) => {
         if (selectedCartridge?.downloading) return; // change only if download already finished
@@ -104,7 +106,7 @@ export function SelectedCartridgeProvider({ children }:{ children: React.ReactNo
     }
 
     return (
-        <selectedCartridgeContext.Provider value={ {selectedCartridge, changeCartridge, unselectCartridge, playCartridge,
+        <selectedCartridgeContext.Provider value={ {selectedCartridge, walletBalance, setWalletBalance, changeCartridge, unselectCartridge, playCartridge,
                 setReplay, setCartridgeData, setGameParameters,
                 setGameplay, stopCartridge, setDownloadingCartridge} }>
             { children }
