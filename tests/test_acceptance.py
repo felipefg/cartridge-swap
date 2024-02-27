@@ -253,3 +253,57 @@ def test_should_buy_second_cartridge(
     )
 
     assert dapp_client.rollup.status
+
+
+@pytest.mark.order(after="test_should_buy_second_cartridge")
+def test_user_should_own_cartridge_list(dapp_client: TestClient):
+    """
+    GIVEN The user owns two copies of Breakout
+    WHEN The user list cartridges with owner parameter set
+    THEN The resulting list says he owns 2 copies of Breakout
+    """
+    path = f'app/cartridges?owner={USER_ADDRESS}'
+    inspect_payload = '0x' + path.encode('ascii').hex()
+
+    dapp_client.send_inspect(hex_payload=inspect_payload)
+
+    assert dapp_client.rollup.status
+
+    report = dapp_client.rollup.reports[-1]['data']['payload']
+    report = bytes.fromhex(report[2:])
+    report = json.loads(report.decode('utf-8'))
+    assert isinstance(report, dict)
+    assert isinstance(report.get('data'), list)
+    assert len(report['data']) > 0
+
+    breakout_info = [x for x in report['data'] if x['name'] == 'Breakout'][0]
+
+    # Listing should have model details and pricing
+    assert 'owned_copies' in breakout_info
+    assert isinstance(breakout_info['owned_copies'], int)
+    assert breakout_info['owned_copies'] == 2
+
+
+@pytest.mark.order(after="test_should_buy_second_cartridge")
+def test_user_should_own_cartridge_details(dapp_client: TestClient):
+    """
+    GIVEN The user owns two copies of Breakout
+    WHEN The user retrieves information about Breakout
+    THEN The the results say he owns 2 copies
+    """
+    path = f'app/cartridge_info?id={BREAKOUT_ID}&owner={USER_ADDRESS}'
+    inspect_payload = '0x' + path.encode('ascii').hex()
+
+    dapp_client.send_inspect(hex_payload=inspect_payload)
+
+    assert dapp_client.rollup.status
+
+    report = dapp_client.rollup.reports[-1]['data']['payload']
+    report = bytes.fromhex(report[2:])
+    report = json.loads(report.decode('utf-8'))
+    assert isinstance(report, dict)
+
+    # Listing should have model details and pricing
+    assert 'owned_copies' in report
+    assert isinstance(report['owned_copies'], int)
+    assert report['owned_copies'] == 2

@@ -263,21 +263,15 @@ export function exportToModel(data: any, modelName: string): string {
     return exporter(data);
 }
 
-export class RemoveCartridgePayload extends IOData<ifaces.RemoveCartridgePayload> { constructor(data: ifaces.RemoveCartridgePayload, validate: boolean = true) { super(models['RemoveCartridgePayload'],data,validate); } }
-export function exportToRemoveCartridgePayload(data: ifaces.RemoveCartridgePayload): string {
-    const dataToExport: RemoveCartridgePayload = new RemoveCartridgePayload(data);
-    return dataToExport.export();
-}
-
 export class ScoreboardReplayPayload extends IOData<ifaces.ScoreboardReplayPayload> { constructor(data: ifaces.ScoreboardReplayPayload, validate: boolean = true) { super(models['ScoreboardReplayPayload'],data,validate); } }
 export function exportToScoreboardReplayPayload(data: ifaces.ScoreboardReplayPayload): string {
     const dataToExport: ScoreboardReplayPayload = new ScoreboardReplayPayload(data);
     return dataToExport.export();
 }
 
-export class EmptyClass extends IOData<ifaces.EmptyClass> { constructor(data: ifaces.EmptyClass, validate: boolean = true) { super(models['EmptyClass'],data,validate); } }
-export function exportToEmptyClass(data: ifaces.EmptyClass): string {
-    const dataToExport: EmptyClass = new EmptyClass(data);
+export class InsertCartridgePayload extends IOData<ifaces.InsertCartridgePayload> { constructor(data: ifaces.InsertCartridgePayload, validate: boolean = true) { super(models['InsertCartridgePayload'],data,validate); } }
+export function exportToInsertCartridgePayload(data: ifaces.InsertCartridgePayload): string {
+    const dataToExport: InsertCartridgePayload = new InsertCartridgePayload(data);
     return dataToExport.export();
 }
 
@@ -293,15 +287,21 @@ export function exportToBuyCartridgePayload(data: ifaces.BuyCartridgePayload): s
     return dataToExport.export();
 }
 
+export class EmptyClass extends IOData<ifaces.EmptyClass> { constructor(data: ifaces.EmptyClass, validate: boolean = true) { super(models['EmptyClass'],data,validate); } }
+export function exportToEmptyClass(data: ifaces.EmptyClass): string {
+    const dataToExport: EmptyClass = new EmptyClass(data);
+    return dataToExport.export();
+}
+
 export class Replay extends IOData<ifaces.Replay> { constructor(data: ifaces.Replay, validate: boolean = true) { super(models['Replay'],data,validate); } }
 export function exportToReplay(data: ifaces.Replay): string {
     const dataToExport: Replay = new Replay(data);
     return dataToExport.export();
 }
 
-export class InsertCartridgePayload extends IOData<ifaces.InsertCartridgePayload> { constructor(data: ifaces.InsertCartridgePayload, validate: boolean = true) { super(models['InsertCartridgePayload'],data,validate); } }
-export function exportToInsertCartridgePayload(data: ifaces.InsertCartridgePayload): string {
-    const dataToExport: InsertCartridgePayload = new InsertCartridgePayload(data);
+export class RemoveCartridgePayload extends IOData<ifaces.RemoveCartridgePayload> { constructor(data: ifaces.RemoveCartridgePayload, validate: boolean = true) { super(models['RemoveCartridgePayload'],data,validate); } }
+export function exportToRemoveCartridgePayload(data: ifaces.RemoveCartridgePayload): string {
+    const dataToExport: RemoveCartridgePayload = new RemoveCartridgePayload(data);
     return dataToExport.export();
 }
 
@@ -317,9 +317,9 @@ export function exportToScoreboardsPayload(data: ifaces.ScoreboardsPayload): str
     return dataToExport.export();
 }
 
-export class ScoresPayload extends IOData<ifaces.ScoresPayload> { constructor(data: ifaces.ScoresPayload, validate: boolean = true) { super(models['ScoresPayload'],data,validate); } }
-export function exportToScoresPayload(data: ifaces.ScoresPayload): string {
-    const dataToExport: ScoresPayload = new ScoresPayload(data);
+export class CartridgePayloadSplittable extends IOData<ifaces.CartridgePayloadSplittable> { constructor(data: ifaces.CartridgePayloadSplittable, validate: boolean = true) { super(models['CartridgePayloadSplittable'],data,validate); } }
+export function exportToCartridgePayloadSplittable(data: ifaces.CartridgePayloadSplittable): string {
+    const dataToExport: CartridgePayloadSplittable = new CartridgePayloadSplittable(data);
     return dataToExport.export();
 }
 
@@ -329,9 +329,9 @@ export function exportToCartridgesPayload(data: ifaces.CartridgesPayload): strin
     return dataToExport.export();
 }
 
-export class CartridgePayloadSplittable extends IOData<ifaces.CartridgePayloadSplittable> { constructor(data: ifaces.CartridgePayloadSplittable, validate: boolean = true) { super(models['CartridgePayloadSplittable'],data,validate); } }
-export function exportToCartridgePayloadSplittable(data: ifaces.CartridgePayloadSplittable): string {
-    const dataToExport: CartridgePayloadSplittable = new CartridgePayloadSplittable(data);
+export class ScoresPayload extends IOData<ifaces.ScoresPayload> { constructor(data: ifaces.ScoresPayload, validate: boolean = true) { super(models['ScoresPayload'],data,validate); } }
+export function exportToScoresPayload(data: ifaces.ScoresPayload): string {
+    const dataToExport: ScoresPayload = new ScoresPayload(data);
     return dataToExport.export();
 }
 
@@ -391,13 +391,6 @@ export function decodeToScoreboardReplayScore(output: CartesiReport | CartesiNot
  */
 
 export const models: Models = {
-    'RemoveCartridgePayload': {
-        ioType:IOType.mutationPayload,
-        abiTypes:['bytes32'],
-        params:['id'],
-        exporter: exportToRemoveCartridgePayload,
-        validator: ajv.compile<ifaces.RemoveCartridgePayload>(JSON.parse('{"title": "RemoveCartridgePayload", "type": "object", "properties": {"id": {"type": "string", "format": "binary"}}, "required": ["id"]}'))
-    },
     'ScoreboardReplayPayload': {
         ioType:IOType.mutationPayload,
         abiTypes:['bytes32', 'bytes32', 'bytes', 'string'],
@@ -405,12 +398,12 @@ export const models: Models = {
         exporter: exportToScoreboardReplayPayload,
         validator: ajv.compile<ifaces.ScoreboardReplayPayload>(JSON.parse('{"title": "ScoreboardReplayPayload", "type": "object", "properties": {"scoreboard_id": {"type": "string", "format": "binary"}, "outcard_hash": {"type": "string", "format": "binary"}, "log": {"type": "string", "format": "binary"}, "user_alias": {"type": "string"}}, "required": ["scoreboard_id", "outcard_hash", "log", "user_alias"]}'))
     },
-    'EmptyClass': {
+    'InsertCartridgePayload': {
         ioType:IOType.mutationPayload,
-        abiTypes:[],
-        params:[],
-        exporter: exportToEmptyClass,
-        validator: ajv.compile<ifaces.EmptyClass>(JSON.parse('{"title": "EmptyClass", "type": "object", "properties": {}}'))
+        abiTypes:['uint128', 'uint128', 'uint128', 'uint128', 'bytes'],
+        params:['base_price', 'initial_supply', 'smoothing_factor', 'exponent', 'data'],
+        exporter: exportToInsertCartridgePayload,
+        validator: ajv.compile<ifaces.InsertCartridgePayload>(JSON.parse('{"title": "InsertCartridgePayload", "type": "object", "properties": {"base_price": {"type": "integer"}, "initial_supply": {"type": "integer"}, "smoothing_factor": {"type": "integer"}, "exponent": {"type": "integer"}, "data": {"type": "string", "format": "binary"}}, "required": ["base_price", "initial_supply", "smoothing_factor", "exponent", "data"]}'))
     },
     'CreateScoreboardPayload': {
         ioType:IOType.mutationPayload,
@@ -426,6 +419,13 @@ export const models: Models = {
         exporter: exportToBuyCartridgePayload,
         validator: ajv.compile<ifaces.BuyCartridgePayload>(JSON.parse('{"title": "BuyCartridgePayload", "type": "object", "properties": {"id": {"type": "string", "format": "binary"}}, "required": ["id"]}'))
     },
+    'EmptyClass': {
+        ioType:IOType.mutationPayload,
+        abiTypes:[],
+        params:[],
+        exporter: exportToEmptyClass,
+        validator: ajv.compile<ifaces.EmptyClass>(JSON.parse('{"title": "EmptyClass", "type": "object", "properties": {}}'))
+    },
     'Replay': {
         ioType:IOType.mutationPayload,
         abiTypes:['bytes32', 'bytes32', 'string', 'bytes', 'bytes', 'string'],
@@ -433,19 +433,19 @@ export const models: Models = {
         exporter: exportToReplay,
         validator: ajv.compile<ifaces.Replay>(JSON.parse('{"title": "Replay", "type": "object", "properties": {"cartridge_id": {"type": "string", "format": "binary"}, "outcard_hash": {"type": "string", "format": "binary"}, "args": {"type": "string"}, "in_card": {"type": "string", "format": "binary"}, "log": {"type": "string", "format": "binary"}, "user_alias": {"type": "string"}}, "required": ["cartridge_id", "outcard_hash", "args", "in_card", "log", "user_alias"]}'))
     },
-    'InsertCartridgePayload': {
+    'RemoveCartridgePayload': {
         ioType:IOType.mutationPayload,
-        abiTypes:['uint128', 'uint128', 'uint128', 'uint128', 'bytes'],
-        params:['base_price', 'initial_supply', 'smoothing_factor', 'exponent', 'data'],
-        exporter: exportToInsertCartridgePayload,
-        validator: ajv.compile<ifaces.InsertCartridgePayload>(JSON.parse('{"title": "InsertCartridgePayload", "type": "object", "properties": {"base_price": {"type": "integer"}, "initial_supply": {"type": "integer"}, "smoothing_factor": {"type": "integer"}, "exponent": {"type": "integer"}, "data": {"type": "string", "format": "binary"}}, "required": ["base_price", "initial_supply", "smoothing_factor", "exponent", "data"]}'))
+        abiTypes:['bytes32'],
+        params:['id'],
+        exporter: exportToRemoveCartridgePayload,
+        validator: ajv.compile<ifaces.RemoveCartridgePayload>(JSON.parse('{"title": "RemoveCartridgePayload", "type": "object", "properties": {"id": {"type": "string", "format": "binary"}}, "required": ["id"]}'))
     },
     'CartridgePayload': {
         ioType:IOType.queryPayload,
         abiTypes:[],
-        params:['id'],
+        params:['id', 'owner'],
         exporter: exportToCartridgePayload,
-        validator: ajv.compile<ifaces.CartridgePayload>(JSON.parse('{"title": "CartridgePayload", "type": "object", "properties": {"id": {"type": "string"}}, "required": ["id"]}'))
+        validator: ajv.compile<ifaces.CartridgePayload>(JSON.parse('{"title": "CartridgePayload", "type": "object", "properties": {"id": {"type": "string"}, "owner": {"type": "string"}}, "required": ["id"]}'))
     },
     'ScoreboardsPayload': {
         ioType:IOType.queryPayload,
@@ -454,6 +454,20 @@ export const models: Models = {
         exporter: exportToScoreboardsPayload,
         validator: ajv.compile<ifaces.ScoreboardsPayload>(JSON.parse('{"title": "ScoreboardsPayload", "type": "object", "properties": {"cartridge_id": {"type": "string"}, "name": {"type": "string"}, "page": {"type": "integer"}, "page_size": {"type": "integer"}}, "required": ["cartridge_id"]}'))
     },
+    'CartridgePayloadSplittable': {
+        ioType:IOType.queryPayload,
+        abiTypes:[],
+        params:['id', 'owner', 'part'],
+        exporter: exportToCartridgePayloadSplittable,
+        validator: ajv.compile<ifaces.CartridgePayloadSplittable>(JSON.parse('{"title": "CartridgePayloadSplittable", "type": "object", "properties": {"id": {"type": "string"}, "owner": {"type": "string"}, "part": {"type": "integer"}}, "required": ["id"]}'))
+    },
+    'CartridgesPayload': {
+        ioType:IOType.queryPayload,
+        abiTypes:[],
+        params:['name', 'tags', 'page', 'page_size', 'owner'],
+        exporter: exportToCartridgesPayload,
+        validator: ajv.compile<ifaces.CartridgesPayload>(JSON.parse('{"title": "CartridgesPayload", "type": "object", "properties": {"name": {"type": "string"}, "tags": {"type": "array", "items": {"type": "string"}}, "page": {"type": "integer"}, "page_size": {"type": "integer"}, "owner": {"type": "string"}}}'))
+    },
     'ScoresPayload': {
         ioType:IOType.queryPayload,
         abiTypes:[],
@@ -461,33 +475,19 @@ export const models: Models = {
         exporter: exportToScoresPayload,
         validator: ajv.compile<ifaces.ScoresPayload>(JSON.parse('{"title": "ScoresPayload", "type": "object", "properties": {"scoreboard_id": {"type": "string"}, "page": {"type": "integer"}, "page_size": {"type": "integer"}}, "required": ["scoreboard_id"]}'))
     },
-    'CartridgesPayload': {
-        ioType:IOType.queryPayload,
-        abiTypes:[],
-        params:['name', 'tags', 'page', 'page_size'],
-        exporter: exportToCartridgesPayload,
-        validator: ajv.compile<ifaces.CartridgesPayload>(JSON.parse('{"title": "CartridgesPayload", "type": "object", "properties": {"name": {"type": "string"}, "tags": {"type": "array", "items": {"type": "string"}}, "page": {"type": "integer"}, "page_size": {"type": "integer"}}}'))
-    },
-    'CartridgePayloadSplittable': {
-        ioType:IOType.queryPayload,
-        abiTypes:[],
-        params:['id', 'part'],
-        exporter: exportToCartridgePayloadSplittable,
-        validator: ajv.compile<ifaces.CartridgePayloadSplittable>(JSON.parse('{"title": "CartridgePayloadSplittable", "type": "object", "properties": {"id": {"type": "string"}, "part": {"type": "integer"}}, "required": ["id"]}'))
-    },
     'CartridgeInfo': {
         ioType:IOType.report,
         abiTypes:[],
-        params:['id', 'name', 'user_address', 'info', 'created_at', 'cover', 'base_price', 'initial_supply', 'smoothing_factor', 'exponent', 'sell_price', 'buy_price', 'total_supply'],
+        params:['id', 'name', 'user_address', 'info', 'created_at', 'cover', 'base_price', 'initial_supply', 'smoothing_factor', 'exponent', 'sell_price', 'buy_price', 'total_supply', 'owned_copies'],
         decoder: decodeToCartridgeInfo,
-        validator: ajv.compile<ifaces.CartridgeInfo>(JSON.parse('{"title": "CartridgeInfo", "type": "object", "properties": {"id": {"type": "string"}, "name": {"type": "string"}, "user_address": {"type": "string"}, "info": {"$ref": "#/definitions/Info"}, "created_at": {"type": "integer"}, "cover": {"type": "string"}, "base_price": {"type": "integer"}, "initial_supply": {"type": "integer"}, "smoothing_factor": {"type": "integer"}, "exponent": {"type": "integer"}, "sell_price": {"type": "integer"}, "buy_price": {"type": "integer"}, "total_supply": {"type": "integer"}}, "required": ["id", "name", "user_address", "created_at", "base_price", "initial_supply", "smoothing_factor", "exponent", "sell_price", "buy_price", "total_supply"], "definitions": {"Author": {"title": "Author", "type": "object", "properties": {"name": {"type": "string"}, "link": {"type": "string"}}, "required": ["name", "link"]}, "Info": {"title": "Info", "type": "object", "properties": {"name": {"type": "string"}, "summary": {"type": "string"}, "description": {"type": "string"}, "version": {"type": "string"}, "status": {"type": "string"}, "tags": {"type": "array", "items": {"type": "string"}}, "authors": {"type": "array", "items": {"$ref": "#/definitions/Author"}}, "url": {"type": "string"}}, "required": ["name", "tags"]}}}'))
+        validator: ajv.compile<ifaces.CartridgeInfo>(JSON.parse('{"title": "CartridgeInfo", "type": "object", "properties": {"id": {"type": "string"}, "name": {"type": "string"}, "user_address": {"type": "string"}, "info": {"$ref": "#/definitions/Info"}, "created_at": {"type": "integer"}, "cover": {"type": "string"}, "base_price": {"type": "integer"}, "initial_supply": {"type": "integer"}, "smoothing_factor": {"type": "integer"}, "exponent": {"type": "integer"}, "sell_price": {"type": "integer"}, "buy_price": {"type": "integer"}, "total_supply": {"type": "integer"}, "owned_copies": {"type": "integer"}}, "required": ["id", "name", "user_address", "created_at", "base_price", "initial_supply", "smoothing_factor", "exponent", "sell_price", "buy_price", "total_supply"], "definitions": {"Author": {"title": "Author", "type": "object", "properties": {"name": {"type": "string"}, "link": {"type": "string"}}, "required": ["name", "link"]}, "Info": {"title": "Info", "type": "object", "properties": {"name": {"type": "string"}, "summary": {"type": "string"}, "description": {"type": "string"}, "version": {"type": "string"}, "status": {"type": "string"}, "tags": {"type": "array", "items": {"type": "string"}}, "authors": {"type": "array", "items": {"$ref": "#/definitions/Author"}}, "url": {"type": "string"}}, "required": ["name", "tags"]}}}'))
     },
     'CartridgesOutput': {
         ioType:IOType.report,
         abiTypes:[],
         params:['data', 'total', 'page'],
         decoder: decodeToCartridgesOutput,
-        validator: ajv.compile<ifaces.CartridgesOutput>(JSON.parse('{"title": "CartridgesOutput", "type": "object", "properties": {"data": {"type": "array", "items": {"$ref": "#/definitions/CartridgeInfo"}}, "total": {"type": "integer"}, "page": {"type": "integer"}}, "required": ["data", "total", "page"], "definitions": {"Author": {"title": "Author", "type": "object", "properties": {"name": {"type": "string"}, "link": {"type": "string"}}, "required": ["name", "link"]}, "Info": {"title": "Info", "type": "object", "properties": {"name": {"type": "string"}, "summary": {"type": "string"}, "description": {"type": "string"}, "version": {"type": "string"}, "status": {"type": "string"}, "tags": {"type": "array", "items": {"type": "string"}}, "authors": {"type": "array", "items": {"$ref": "#/definitions/Author"}}, "url": {"type": "string"}}, "required": ["name", "tags"]}, "CartridgeInfo": {"title": "CartridgeInfo", "type": "object", "properties": {"id": {"type": "string"}, "name": {"type": "string"}, "user_address": {"type": "string"}, "info": {"$ref": "#/definitions/Info"}, "created_at": {"type": "integer"}, "cover": {"type": "string"}, "base_price": {"type": "integer"}, "initial_supply": {"type": "integer"}, "smoothing_factor": {"type": "integer"}, "exponent": {"type": "integer"}, "sell_price": {"type": "integer"}, "buy_price": {"type": "integer"}, "total_supply": {"type": "integer"}}, "required": ["id", "name", "user_address", "created_at", "base_price", "initial_supply", "smoothing_factor", "exponent", "sell_price", "buy_price", "total_supply"]}}}'))
+        validator: ajv.compile<ifaces.CartridgesOutput>(JSON.parse('{"title": "CartridgesOutput", "type": "object", "properties": {"data": {"type": "array", "items": {"$ref": "#/definitions/CartridgeInfo"}}, "total": {"type": "integer"}, "page": {"type": "integer"}}, "required": ["data", "total", "page"], "definitions": {"Author": {"title": "Author", "type": "object", "properties": {"name": {"type": "string"}, "link": {"type": "string"}}, "required": ["name", "link"]}, "Info": {"title": "Info", "type": "object", "properties": {"name": {"type": "string"}, "summary": {"type": "string"}, "description": {"type": "string"}, "version": {"type": "string"}, "status": {"type": "string"}, "tags": {"type": "array", "items": {"type": "string"}}, "authors": {"type": "array", "items": {"$ref": "#/definitions/Author"}}, "url": {"type": "string"}}, "required": ["name", "tags"]}, "CartridgeInfo": {"title": "CartridgeInfo", "type": "object", "properties": {"id": {"type": "string"}, "name": {"type": "string"}, "user_address": {"type": "string"}, "info": {"$ref": "#/definitions/Info"}, "created_at": {"type": "integer"}, "cover": {"type": "string"}, "base_price": {"type": "integer"}, "initial_supply": {"type": "integer"}, "smoothing_factor": {"type": "integer"}, "exponent": {"type": "integer"}, "sell_price": {"type": "integer"}, "buy_price": {"type": "integer"}, "total_supply": {"type": "integer"}, "owned_copies": {"type": "integer"}}, "required": ["id", "name", "user_address", "created_at", "base_price", "initial_supply", "smoothing_factor", "exponent", "sell_price", "buy_price", "total_supply"]}}}'))
     },
     'ScoreboardsOutput': {
         ioType:IOType.report,

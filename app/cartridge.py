@@ -38,7 +38,7 @@ class Cartridge(Entity):
     initial_supply  = helpers.Required(int)
     smoothing_factor= helpers.Required(int)
     exponent        = helpers.Required(int)
-    users           = helpers.Set('CartridgeUser')
+    cartridge_owners= helpers.Set('CartridgeUser')
 
 
 class CartridgeUser(Entity):
@@ -68,6 +68,7 @@ class BuyCartridgePayload(BaseModel):
 
 class CartridgePayload(BaseModel):
     id: String
+    owner: Optional[str]
 
 # TODO: TypeError: unhashable type: 'ABIType' allow python cartesi types
 class CartridgesPayload(BaseModel):
@@ -75,6 +76,7 @@ class CartridgesPayload(BaseModel):
     tags:       Optional[List[str]]
     page:       Optional[int]
     page_size:  Optional[int]
+    owner:      Optional[str]
 
 
 # Outputs
@@ -119,6 +121,7 @@ class CartridgeInfo(BaseModel):
     sell_price: UInt128
     buy_price: UInt128
     total_supply: UInt128
+    owned_copies: Optional[UInt128]
 
 @output()
 class CartridgesOutput(BaseModel):
@@ -338,7 +341,7 @@ def buy_cartridge(payload: BuyCartridgePayload) -> bool:
         receiver=cartridge.user_address,
         amount=buy)
 
-    cartridge.users.create(user_address=buyer)
+    cartridge.cartridge_owners.create(user_address=buyer.lower())
 
     return True
 
@@ -372,6 +375,13 @@ def cartridge_info(payload: CartridgePayload) -> bool:
         cartridge_dict['sell_price'] = sell
         cartridge_dict['buy_price'] = buy
         cartridge_dict['total_supply'] = total_supply
+
+        if payload.owner:
+            cartridge_dict['owned_copies'] = (
+                cartridge.cartridge_owners
+                .select(lambda co: co.user_address == payload.owner.lower())
+                .count()
+            )
 
         out = CartridgeInfo.parse_obj(cartridge_dict)
         add_output(out)
@@ -415,6 +425,12 @@ def cartridges(payload: CartridgesPayload) -> bool:
         cartridge_dict['sell_price'] = sell
         cartridge_dict['buy_price'] = buy
         cartridge_dict['total_supply'] = total_supply
+        if payload.owner:
+            cartridge_dict['owned_copies'] = (
+                cartridge.cartridge_owners
+                .select(lambda co: co.user_address == payload.owner.lower())
+                .count()
+            )
 
         dict_list_result.append(cartridge_dict)
 
@@ -504,7 +520,7 @@ def get_prices_supply_for_cartridge(cartridge: Cartridge):
     """
     Get prices and current supply for the given cartridge.
     """
-    total_supply = cartridge.users.count()
+    total_supply = cartridge.cartridge_owners.count()
     sell, buy = get_prices(
         cartridge.base_price,
         total_supply=total_supply,
