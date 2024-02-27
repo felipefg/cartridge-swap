@@ -95,7 +95,7 @@ echo "#!/bin/sh
 set -e
 
 export PYTHONPATH=${PYTHONPATH}
-python3 main.py
+cartesapp run app --log-level info
 " > entrypoint.sh && \
 chmod +x entrypoint.sh
 EOF

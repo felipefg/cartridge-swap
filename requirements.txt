@@ -1,5 +1,5 @@
 base58==2.1.1
-cartesapp @ git+https://github.com/prototyp3-dev/cartesapp@3b2b8f4dcd7ae100474a6df4cb6a8a779dae835a
+cartesapp @ git+https://github.com/prototyp3-dev/cartesapp@1234a80f5aa9a2e7a25dfe708c40a7bb4a24346a
 certifi==2024.2.2
 charset-normalizer==3.3.2
 click==8.1.7
