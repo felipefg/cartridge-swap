@@ -42,10 +42,9 @@ class Cartridge(Entity):
 
 
 class CartridgeUser(Entity):
+    id              = helpers.PrimaryKey(int, auto=True)
     cartridge       = helpers.Required(Cartridge)
     user_address    = helpers.Required(str, 42)
-    helpers.PrimaryKey(cartridge, user_address)
-
 
 
 # Inputs

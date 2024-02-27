@@ -234,3 +234,22 @@ def test_should_fail_purchase_of_bogus_cartridge(
     )
 
     assert not dapp_client.rollup.status
+
+
+@pytest.mark.order(after="test_should_buy_cartridge")
+def test_should_buy_second_cartridge(
+        dapp_client: TestClient,
+        buy_breakout_cartridge_payload: str):
+    """
+    GIVEN The user has enough funds in his wallet
+      AND The user already owns Breakout
+    WHEN The user tries to buy Breakout
+    THEN The order succeeds
+    """
+    # Send deposit
+    dapp_client.send_advance(
+        hex_payload=buy_breakout_cartridge_payload,
+        msg_sender=USER_ADDRESS,
+    )
+
+    assert dapp_client.rollup.status
