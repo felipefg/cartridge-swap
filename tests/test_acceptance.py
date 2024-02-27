@@ -72,4 +72,13 @@ def test_should_list_new_cartridge(dapp_client: TestClient):
     assert isinstance(report, dict)
     assert isinstance(report.get('data'), list)
     assert len(report['data']) == 4
-    assert report['data'][3]['name'] == '2048'
+    cartrigde_info = report['data'][3]
+    assert cartrigde_info['name'] == '2048'
+
+    # Listing should have model details and pricing
+    assert isinstance(cartrigde_info['base_price'], int)
+    assert isinstance(cartrigde_info['initial_supply'], int)
+    assert isinstance(cartrigde_info['smoothing_factor'], int)
+    assert isinstance(cartrigde_info['exponent'], int)
+    assert isinstance(cartrigde_info['price'], int)
+    assert isinstance(cartrigde_info['total_sold'], int)

@@ -106,6 +106,12 @@ class CartridgeInfo(BaseModel):
     info: Optional[Info]
     created_at: UInt
     cover: Optional[str] # encode to base64
+    base_price: UInt128
+    initial_supply: UInt128
+    smoothing_factor: UInt128
+    exponent: UInt128
+    price: UInt128
+    total_sold: UInt128
 
 @output()
 class CartridgesOutput(BaseModel):
@@ -328,6 +334,9 @@ def cartridges(payload: CartridgesPayload) -> bool:
     for cartridge in cartridges:
         cartridge_dict = cartridge.to_dict(with_lazy=True)
         cartridge_dict['cover'] = base64.b64encode(cartridge_dict['cover'])
+        cartridge_dict['price'] = 42
+        cartridge_dict['total_sold'] = 999
+
         dict_list_result.append(cartridge_dict)
 
     LOGGER.info(f"Returning {len(dict_list_result)} of {total} cartridges")
