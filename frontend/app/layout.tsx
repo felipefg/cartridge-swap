@@ -5,8 +5,8 @@ import {Web3OnboardProviderClient} from './utils/web3OnboardProvider';
 import { fontPressStart2P } from './utils/font';
 
 export const metadata: Metadata = {
-  title: 'RiVES',
-  description: 'RiscV Verifiable Entertainment System',
+  title: 'Cartridge Swap',
+  description: 'Marketplace of fantasy console games',
 }
 
 export default function RootLayout({

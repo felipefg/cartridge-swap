@@ -48,7 +48,7 @@ function CartridgeDescription() {
                 </div>
 
                 <div>
-                    <h2 className='text-md text-gray-700 mt-4'>Bonding Supply</h2>
+                    <h2 className='text-md text-gray-700 mt-4'>Total Supply</h2>
                     <pre className={fontPressStart2P.className}>
                         0
                     </pre>

@@ -13,9 +13,9 @@ const chains = [chain]
 const wallets = [injectedModule()]
 
 const appMetadata = {
-  name: 'RiVES',
+  name: 'Cartridge Swap',
   icon: '<svg>My App Icon</svg>',
-  description: 'RiVES allows users to play riscv-binaries of games on a RISC-V Cartesi Machine on the browser. The game moves are submited onchain so the session can be replayed in a Cartesi Rollups DApp to generate a provable score.',
+  description: 'Cartridge Swap allows users to play and trade fantasy console games',
   recommendedInjectedWallets: [
     { name: 'MetaMask', url: 'https://metamask.io' },
     { name: 'Coinbase', url: 'https://wallet.coinbase.com/' }
