@@ -8,7 +8,8 @@ import { fontPressStart2P } from '../utils/font';
 
 import { ContractReceipt, ethers } from "ethers";
 import { useConnectWallet } from "@web3-onboard/react";
-// import { BuyPayload, SellPayload } from '../backend-libs/app/ifaces';
+import { BuyCartridgePayload} from '../backend-libs/app/ifaces';
+import { buyCartridge } from '../backend-libs/app/lib';
 import { envClient } from "../utils/clientEnv";
 import { balanceContext } from '../components/balanceProvider';
 
@@ -23,11 +24,11 @@ function CartridgeDescription() {
 
     async function buy() {
         try {
-            // const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
-            // const inputData: BuyPayload = {}
-            // const receipt = await buyCartridge(signer, envClient.DAPP_ADDR, inputData, {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;
-            // if (receipt == undefined || receipt.events == undefined)
-            //     throw new Error("Couldn't send transaction");
+            const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
+            const payload: BuyCartridgePayload = {id: "0x"+selectedCartridge.id};
+            const receipt = await buyCartridge(signer, envClient.DAPP_ADDR, payload, {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;
+            if (receipt == undefined || receipt.events == undefined)
+                throw new Error("Couldn't send transaction");
             await updateWalletBalance();
             await updateCartridge();
         } catch (error) {
@@ -37,11 +38,11 @@ function CartridgeDescription() {
 
     async function sell() {
         try {
-            // const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
-            // const inputData: SellPayload = {}
+            const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
+            // const payload: SellCartridgePayload = {id: "0x"+selectedCartridge.id};
             // const receipt = await sellCartridge(signer, envClient.DAPP_ADDR, inputData, {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;
-            // if (receipt == undefined || receipt.events == undefined)
-            //     throw new Error("Couldn't send transaction");
+            if (receipt == undefined || receipt.events == undefined)
+                throw new Error("Couldn't send transaction");
             await updateWalletBalance();
             await updateCartridge();
         } catch (error) {
