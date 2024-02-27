@@ -3,14 +3,15 @@
 
 import { createContext, useState } from 'react';
 import { CartridgeInfo as Cartridge } from "../backend-libs/app/ifaces"
-
+import { cartridgeInfo } from '../backend-libs/app/lib';
+import { envClient } from "../utils/clientEnv";
 
 export const selectedCartridgeContext = createContext<{
     selectedCartridge: PlayableCartridge|null,
-    walletBalance: number|null, setWalletBalance:Function, changeCartridge:Function, unselectCartridge:Function, playCartridge:Function,
+    changeCartridge:Function, updateCartridge:Function, unselectCartridge:Function, playCartridge:Function,
         setReplay:Function, setCartridgeData:Function, setGameParameters:Function,
         setGameplay:Function, stopCartridge:Function, setDownloadingCartridge:Function
-}>({selectedCartridge: null, walletBalance: null, setWalletBalance: () => null, changeCartridge: () => null, unselectCartridge: () => null, playCartridge: () => null,
+}>({selectedCartridge: null, changeCartridge: () => null, updateCartridge: () => null, unselectCartridge: () => null, playCartridge: () => null,
     setReplay: () => null, setCartridgeData: () => null, setGameParameters: () => null,
     setGameplay: () => null, stopCartridge: () => null, setDownloadingCartridge: () => null});
 
@@ -38,7 +39,6 @@ export interface PlayableCartridge extends Cartridge {
 
 export function SelectedCartridgeProvider({ children }:{ children: React.ReactNode }) {
     const [selectedCartridge, setSelectedCartridge] = useState<PlayableCartridge|null>(null);
-    const [walletBalance, setWalletBalance] = useState<number|null>(null);
 
     const changeCartridge = (cartridge:Cartridge) => {
         if (selectedCartridge?.downloading) return; // change only if download already finished
@@ -47,6 +47,11 @@ export function SelectedCartridgeProvider({ children }:{ children: React.ReactNo
             args:undefined, scoreFunction:undefined, replay:undefined, gameplayLog:undefined,
             outcard:undefined, outhash:undefined, initCanvas:selectedCartridge?.initCanvas};
         setSelectedCartridge(aux as PlayableCartridge);
+    }
+
+    const updateCartridge = async () => {
+        const cartridgeWithInfo = await cartridgeInfo({id:selectedCartridge.id},{decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL,cache:"no-cache"});
+        changeCartridge(cartridgeWithInfo);
     }
 
     const playCartridge = () => {
@@ -106,7 +111,7 @@ export function SelectedCartridgeProvider({ children }:{ children: React.ReactNo
     }
 
     return (
-        <selectedCartridgeContext.Provider value={ {selectedCartridge, walletBalance, setWalletBalance, changeCartridge, unselectCartridge, playCartridge,
+        <selectedCartridgeContext.Provider value={ {selectedCartridge, changeCartridge, updateCartridge, unselectCartridge, playCartridge,
                 setReplay, setCartridgeData, setGameParameters,
                 setGameplay, stopCartridge, setDownloadingCartridge} }>
             { children }

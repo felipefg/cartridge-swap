@@ -5,11 +5,48 @@ import { useContext } from 'react';
 import { selectedCartridgeContext } from '../cartridges/selectedCartridgeProvider';
 import { fontPressStart2P } from '../utils/font';
 
+
+import { ContractReceipt, ethers } from "ethers";
+import { useConnectWallet } from "@web3-onboard/react";
+// import { BuyPayload, SellPayload } from '../backend-libs/app/ifaces';
+import { envClient } from "../utils/clientEnv";
+import { balanceContext } from '../components/balanceProvider';
+
 function CartridgeDescription() {
-    const {selectedCartridge} = useContext(selectedCartridgeContext);
+    const [{ wallet }, connect] = useConnectWallet();
+    const {selectedCartridge, updateCartridge} = useContext(selectedCartridgeContext);
+    const {walletBalance, updateWalletBalance} = useContext(balanceContext);
 
     if (!selectedCartridge) {
         return <></>;
+    }
+
+    async function buy() {
+        try {
+            // const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
+            // const inputData: BuyPayload = {}
+            // const receipt = await buyCartridge(signer, envClient.DAPP_ADDR, inputData, {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;
+            // if (receipt == undefined || receipt.events == undefined)
+            //     throw new Error("Couldn't send transaction");
+            await updateWalletBalance();
+            await updateCartridge();
+        } catch (error) {
+            await alert(error.message);
+        }
+    }
+
+    async function sell() {
+        try {
+            // const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
+            // const inputData: SellPayload = {}
+            // const receipt = await sellCartridge(signer, envClient.DAPP_ADDR, inputData, {sync:false, cartesiNodeUrl: envClient.CARTESI_NODE_URL}) as ContractReceipt;
+            // if (receipt == undefined || receipt.events == undefined)
+            //     throw new Error("Couldn't send transaction");
+            await updateWalletBalance();
+            await updateCartridge();
+        } catch (error) {
+            await alert(error.message);
+        }
     }
 
     return (
@@ -24,7 +61,7 @@ function CartridgeDescription() {
                     <h2 className='text-lg text-gray-700 mt-4'>Buy Price</h2>
                     <pre className={fontPressStart2P.className}>
                         <span className="text-lg text-blue-700">${(selectedCartridge.buy_price / 1000000).toFixed(2)}</span>
-                        <button className="btn w-1/3 ml-1">
+                        <button disabled={!wallet} className="btn w-1/3 ml-1" onClick={buy}>
                             BUY
                         </button>
                     </pre>
@@ -34,7 +71,7 @@ function CartridgeDescription() {
                     <h2 className='text-lg text-gray-700 mt-4'>Sell Price</h2>
                     <pre className={fontPressStart2P.className}>
                         <span className="text-lg text-blue-700">${(selectedCartridge.sell_price / 1000000).toFixed(2)}</span>
-                        <button className="btn w-1/3 ml-1">
+                        <button disabled={!wallet} className="btn w-1/3 ml-1" onClick={sell}>
                             SELL
                         </button>
                     </pre>
