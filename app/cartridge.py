@@ -16,6 +16,7 @@ from cartesapp.output import event, output, add_output, emit_event, contract_cal
 
 from .riv import riv_get_cartridge_info, riv_get_cartridge_screenshot, riv_get_cartridges_path, riv_get_cover, riv_get_cartridge_outcard, replay_log
 from .settings import AppSettings
+from .bonding_curve import get_prices
 
 LOGGER = logging.getLogger(__name__)
 USDC_UNIT = int(1e6)
@@ -36,13 +37,14 @@ class Cartridge(Entity):
     initial_supply  = helpers.Required(int)
     smoothing_factor= helpers.Required(int)
     exponent        = helpers.Required(int)
+    users           = helpers.Set('CartridgeUser')
 
 
 class CartridgeUser(Entity):
     id              = helpers.Required(int, auto=True, index=True)
-    cartridge_id    = helpers.Required(str, 64)
+    cartridge       = helpers.Required(Cartridge)
     user_address    = helpers.Required(str, 42)
-    helpers.PrimaryKey(cartridge_id, user_address)
+    helpers.PrimaryKey(cartridge, user_address)
 
 
 
@@ -298,9 +300,11 @@ def cartridge_info(payload: CartridgePayload) -> bool:
     if cartridge is not None:
         cartridge_dict = cartridge.to_dict(with_lazy=True)
         cartridge_dict['cover'] = base64.b64encode(cartridge_dict['cover'])
-        cartridge_dict['sell_price'] = 33 * USDC_UNIT
-        cartridge_dict['buy_price'] = 42 * USDC_UNIT
-        cartridge_dict['total_supply'] = 999
+
+        sell, buy, total_supply = get_prices_supply_for_cartridge(cartridge)
+        cartridge_dict['sell_price'] = sell
+        cartridge_dict['buy_price'] = buy
+        cartridge_dict['total_supply'] = total_supply
 
         out = CartridgeInfo.parse_obj(cartridge_dict)
         add_output(out)
@@ -339,9 +343,11 @@ def cartridges(payload: CartridgesPayload) -> bool:
     for cartridge in cartridges:
         cartridge_dict = cartridge.to_dict(with_lazy=True)
         cartridge_dict['cover'] = base64.b64encode(cartridge_dict['cover'])
-        cartridge_dict['sell_price'] = 33 * USDC_UNIT
-        cartridge_dict['buy_price'] = 42 * USDC_UNIT
-        cartridge_dict['total_supply'] = 999
+
+        sell, buy, total_supply = get_prices_supply_for_cartridge(cartridge)
+        cartridge_dict['sell_price'] = sell
+        cartridge_dict['buy_price'] = buy
+        cartridge_dict['total_supply'] = total_supply
 
         dict_list_result.append(cartridge_dict)
 
@@ -425,3 +431,19 @@ def delete_cartridge(cartridge_id,**metadata):
 
     cartridge.delete()
     os.remove(f"{riv_get_cartridges_path()}/{cartridge_id}")
+
+
+def get_prices_supply_for_cartridge(cartridge: Cartridge):
+    """
+    Get prices and current supply for the given cartridge.
+    """
+    total_supply = cartridge.users.count()
+    sell, buy = get_prices(
+        cartridge.base_price,
+        total_supply=total_supply,
+        initial_supply=cartridge.initial_supply,
+        int_smoothing=cartridge.smoothing_factor,
+        int_exponent=cartridge.exponent,
+    )
+
+    return sell, buy, total_supply
