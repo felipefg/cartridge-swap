@@ -12,16 +12,7 @@ function Navbar() {
     const pathname = usePathname();
     const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
     const [{ chains, connectedChain }, setChain] = useSetChain();
-    const [showDepositModal, setShowDepositModal] = useState(false);
     const [connectButtonTxt, setConnectButtonTxt] = useState("Connect");
-
-    const openDepositModal = () => {
-        setShowDepositModal(true);
-    }
-
-    const closeDepositModal = () => {
-        setShowDepositModal(false);
-    }
 
     useEffect(() => {
         if (!connectedChain) return;
@@ -60,14 +51,7 @@ function Navbar() {
             </Link>
 
             <div className='flex-1 flex justify-end'>
-                <div className='p-2'>
-                    <div>Balance</div>
-                    <div className="text-blue-700">
-                        <span>$20.00</span>
-                    </div>
-                </div>
-                { showDepositModal && <DepositModal onClose={closeDepositModal}/>}
-                <button className="btn btn-deposit" onClick={openDepositModal}>Deposit</button>
+                <DepositModal />
                 <button className='navbar-item' disabled={connecting}
                     onClick={() => (wallet ? disconnect(wallet) : connect())}
                 >
