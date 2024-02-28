@@ -69,7 +69,6 @@ export default function InsertCartridge() {
       } else if (curve == "steeper") {
         smoothingFactor = 5000;
         exponent = 2000;
-
       }
 
       const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();

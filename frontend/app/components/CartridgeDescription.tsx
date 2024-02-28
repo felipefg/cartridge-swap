@@ -48,7 +48,9 @@ function CartridgeDescription() {
 
     return (
         <div className='p-2 pt-0 text-xs overflow-auto custom-scrollbar max-h-96'>
-            <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 mb-2">Owned</span>
+            {selectedCartridge.owned_copies > 0 &&
+                <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 mb-2">Owns {selectedCartridge.owned_copies} copies </span>
+            }
 
             <h2 className='text-lg text-gray-700 pt-2'>Summary</h2>
             <span>{selectedCartridge.info?.summary}</span>

@@ -2,10 +2,12 @@
 
 import React, { useState, useContext } from 'react'
 import { balanceContext } from './balanceProvider';
+import { useConnectWallet } from "@web3-onboard/react";
 
 function DepositModal() {
     const [showDepositModal, setShowDepositModal] = useState(false);
     const [amount, setAmount] = useState(10);
+    const [{ wallet }] = useConnectWallet();
     const {walletBalance, updateWalletBalance, depositWalletBalance} = useContext(balanceContext);
 
     const openDepositModal = () => {
@@ -21,11 +23,13 @@ function DepositModal() {
         closeDepositModal();
     }
 
-    updateWalletBalance();
+    if (wallet) {
+        updateWalletBalance();
+    }
 
     return (<>
-        { walletBalance != null && <>
-                <div className='p-2'>
+        { (wallet && walletBalance >= 0) && <>
+                <div className="p-2">
                     <div>Balance</div>
                     <div className="text-blue-700">
                         <span>${(walletBalance / 1000000).toFixed(2)}</span>
@@ -35,8 +39,7 @@ function DepositModal() {
             </>
         }
         { showDepositModal &&
-        <div
-                className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-30 outline-none focus:outline-none"
+        <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-30 outline-none focus:outline-none"
             >
                 <div className="relative w-max my-6 mx-auto">
                     {/*content*/}
@@ -48,7 +51,7 @@ function DepositModal() {
                         {/*body*/}
                         <div>
                             <fieldset className={`relative my-6 px-6 flex-auto h-full`}>
-                                <div >
+                                <div>
                                     <legend>
                                         Amount
                                     </legend>
@@ -75,8 +78,8 @@ function DepositModal() {
                     </div>
                 </div>
             </div>}
-             </>
-            )
+        </>
+    )
 }
 
 export default DepositModal;

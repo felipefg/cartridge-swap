@@ -5,6 +5,7 @@ import { createContext, useState } from 'react';
 import { CartridgeInfo as Cartridge } from "../backend-libs/app/ifaces"
 import { cartridgeInfo } from '../backend-libs/app/lib';
 import { envClient } from "../utils/clientEnv";
+import { useConnectWallet } from "@web3-onboard/react";
 
 export const selectedCartridgeContext = createContext<{
     selectedCartridge: PlayableCartridge|null,
@@ -39,6 +40,7 @@ export interface PlayableCartridge extends Cartridge {
 
 export function SelectedCartridgeProvider({ children }:{ children: React.ReactNode }) {
     const [selectedCartridge, setSelectedCartridge] = useState<PlayableCartridge|null>(null);
+    const [{ wallet }] = useConnectWallet();
 
     const changeCartridge = (cartridge:Cartridge) => {
         if (selectedCartridge?.downloading) return; // change only if download already finished
@@ -50,7 +52,8 @@ export function SelectedCartridgeProvider({ children }:{ children: React.ReactNo
     }
 
     const updateCartridge = async () => {
-        const cartridgeWithInfo = await cartridgeInfo({id:selectedCartridge.id},{decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL,cache:"no-cache"});
+        let wallet_addr = wallet ? wallet.accounts[0].address.toLowerCase() : undefined;
+        const cartridgeWithInfo = await cartridgeInfo({id:selectedCartridge.id, owner:wallet_addr},{decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL,cache:"no-cache"});
         changeCartridge(cartridgeWithInfo);
     }
 
