@@ -24,6 +24,7 @@ ERC20_PORTAL_ADDRESS = "0x9C21AEb2093C32DDbC53eEF24B873BDCd1aDa1DB"
 ERC20_USDC_ADDRESS = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
 USER_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 USER2_ADDRESS = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+DEVELOPER_ADDRESS = "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
 BREAKOUT_ID = (
     "92d813d07db2607710ffd9b12a737a80c3e682f34119b7f4e0e2890c4b300672"
 )
@@ -66,7 +67,8 @@ def test_should_insert_cartridge(
     ).to_bytes()
 
     hex_payload = '0x' + (header + insert_cartridge_payload).hex()
-    dapp_client.send_advance(hex_payload=hex_payload)
+    dapp_client.send_advance(hex_payload=hex_payload,
+                             msg_sender=DEVELOPER_ADDRESS)
 
     assert dapp_client.rollup.status
 
@@ -236,6 +238,21 @@ def test_should_fail_purchase_of_bogus_cartridge(
     )
 
     assert not dapp_client.rollup.status
+
+
+@pytest.mark.order(after="test_should_buy_cartridge")
+def test_developer_should_receive_fee(dapp_client: TestClient):
+    path = f'wallet/balance/{DEVELOPER_ADDRESS}'
+    inspect_payload = '0x' + path.encode('ascii').hex()
+    dapp_client.send_inspect(hex_payload=inspect_payload)
+
+    assert dapp_client.rollup.status
+
+    report = dapp_client.rollup.reports[-1]['data']['payload']
+    report = bytes.fromhex(report[2:])
+    report = json.loads(report.decode('utf-8'))
+    assert isinstance(report, dict)
+    assert report['erc20'][ERC20_USDC_ADDRESS.lower()] == 50 * USDC_UNIT
 
 
 @pytest.mark.order(after="test_should_buy_cartridge")

@@ -17,3 +17,7 @@ class AppSettings:
     cartridges_path = "cartridges"
     scoreboard_ttl = 7776000 # 90 days
     token_addr = None
+    protocol_addr = '0x0000000000000000000000000000000000000000'
+    treasury_addr = '0xffffffffffffffffffffffffffffffffffffffff'
+    developer_fee = 0.1
+    treasury_fee = 0.025

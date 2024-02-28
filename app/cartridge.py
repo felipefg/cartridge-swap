@@ -323,7 +323,7 @@ def buy_cartridge(payload: BuyCartridgePayload) -> bool:
         add_output(msg, tags=['error'])
         return False
 
-    sell, buy, supply = get_prices_supply_for_cartridge(cartridge)
+    sell, buy, fees, supply = get_prices_supply_for_cartridge(cartridge)
 
     if buy == 0:
         msg = f'Cartridge {cartridge_id} has zero buy price. Refusing tx'
@@ -345,12 +345,36 @@ def buy_cartridge(payload: BuyCartridgePayload) -> bool:
 
     LOGGER.debug('User balance=%i buy=%i', balance, buy)
 
-    # TODO: Properly split between game developer and foundation
-    dapp_wallet.transfer_erc20(
-        token=AppSettings.token_addr,
-        sender=buyer,
-        receiver=cartridge.user_address,
-        amount=buy)
+    # Split fee between game developer and foundation
+    if supply < cartridge.initial_supply:
+        developer_amount = buy
+        treasury_amount = 0
+        protocol_amount = 0
+    else:
+        developer_amount, treasury_amount = fees
+        protocol_amount = buy - developer_amount - treasury_amount
+
+    if developer_amount:
+        dapp_wallet.transfer_erc20(
+            token=AppSettings.token_addr,
+            sender=buyer,
+            receiver=cartridge.user_address,
+            amount=developer_amount
+        )
+    if treasury_amount:
+        dapp_wallet.transfer_erc20(
+            token=AppSettings.token_addr,
+            sender=buyer,
+            receiver=AppSettings.treasury_addr,
+            amount=treasury_amount,
+        )
+    if protocol_amount:
+        dapp_wallet.transfer_erc20(
+            token=AppSettings.token_addr,
+            sender=buyer,
+            receiver=AppSettings.protocol_addr,
+            amount=protocol_amount,
+        )
 
     cartridge.cartridge_owners.create(user_address=buyer.lower())
 
@@ -376,7 +400,7 @@ def sell_cartridge(payload: BuyCartridgePayload) -> bool:
         add_output(msg, tags=['error'])
         return False
 
-    sell, buy, supply = get_prices_supply_for_cartridge(cartridge)
+    sell, buy, fees, supply = get_prices_supply_for_cartridge(cartridge)
 
     LOGGER.debug(f'{sell=} {buy=} {supply=}')
 
@@ -398,10 +422,9 @@ def sell_cartridge(payload: BuyCartridgePayload) -> bool:
         add_output(msg, tags=['error'])
         return False
 
-    # TODO: Properly refund the user
     dapp_wallet.transfer_erc20(
         token=AppSettings.token_addr,
-        sender=cartridge.user_address,
+        sender=AppSettings.protocol_addr,
         receiver=seller,
         amount=sell)
 
@@ -436,7 +459,7 @@ def cartridge_info(payload: CartridgePayload) -> bool:
         cartridge_dict = cartridge.to_dict(with_lazy=True)
         cartridge_dict['cover'] = base64.b64encode(cartridge_dict['cover'])
 
-        sell, buy, total_supply = get_prices_supply_for_cartridge(cartridge)
+        sell, buy, fees, total_supply = get_prices_supply_for_cartridge(cartridge)
         cartridge_dict['sell_price'] = sell
         cartridge_dict['buy_price'] = buy
         cartridge_dict['total_supply'] = total_supply
@@ -486,7 +509,7 @@ def cartridges(payload: CartridgesPayload) -> bool:
         cartridge_dict = cartridge.to_dict(with_lazy=True)
         cartridge_dict['cover'] = base64.b64encode(cartridge_dict['cover'])
 
-        sell, buy, total_supply = get_prices_supply_for_cartridge(cartridge)
+        sell, buy, fees, total_supply = get_prices_supply_for_cartridge(cartridge)
         cartridge_dict['sell_price'] = sell
         cartridge_dict['buy_price'] = buy
         cartridge_dict['total_supply'] = total_supply
@@ -586,12 +609,13 @@ def get_prices_supply_for_cartridge(cartridge: Cartridge):
     Get prices and current supply for the given cartridge.
     """
     total_supply = cartridge.cartridge_owners.count()
-    sell, buy = get_prices(
+    sell, buy, fees = get_prices(
         cartridge.base_price,
         total_supply=total_supply,
         initial_supply=cartridge.initial_supply,
         int_smoothing=cartridge.smoothing_factor,
         int_exponent=cartridge.exponent,
+        fees=[AppSettings.developer_fee, AppSettings.treasury_fee],
     )
 
-    return sell, buy, total_supply
+    return sell, buy, fees, total_supply

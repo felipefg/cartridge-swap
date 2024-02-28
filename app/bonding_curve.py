@@ -31,8 +31,8 @@ def get_prices(
         int_smoothing: int,
         int_exponent: int,
         int_decimals: int = 6,
-        round_decimals: int = 2,
-        total_fees: float = 0.1) -> int:
+        round_decimals: int = 4,
+        fees: list[float] = []) -> int:
     """
     Return Sell and Buy prices given the parameters.
 
@@ -44,7 +44,7 @@ def get_prices(
     smoothing = float(int_smoothing)
     exponent = float(int_exponent) / 1000.0
 
-    sell_price = polynomial(
+    buy_price = polynomial(
         base_price=base_price,
         total_supply=total_supply,
         initial_supply=initial_supply,
@@ -52,11 +52,22 @@ def get_prices(
         exponent=exponent
     )
 
-    buy_price = sell_price
-
+    sell_price = polynomial(
+        base_price=base_price,
+        total_supply=total_supply - 1,
+        initial_supply=initial_supply,
+        smoothing=smoothing,
+        exponent=exponent
+    )
+    buy_price = _round_decimal(buy_price, decimal_places=round_decimals)
     if total_supply >= initial_supply:
-        # After initial_supply, buy price is marked up by the fee
-        buy_price = (1 + total_fees) * sell_price
+        rounded_fees = [
+            _round_decimal(x * buy_price, decimal_places=round_decimals)
+            for x in fees
+        ]
+        buy_price = buy_price + sum(rounded_fees)
+    else:
+        rounded_fees = [0 for x in fees]
 
     if total_supply <= initial_supply:
         # Below the initial_supply, all the revenue goes to the creator, and no
@@ -64,12 +75,12 @@ def get_prices(
         sell_price = 0
 
     sell_price = _round_decimal(sell_price, decimal_places=round_decimals)
-    buy_price = _round_decimal(buy_price, decimal_places=round_decimals)
 
     final_sell_price = int(round(sell_price * (10 ** int_decimals)))
     final_buy_price = int(round(buy_price * (10 ** int_decimals)))
+    final_fees = [int(round(x * (10 ** int_decimals))) for x in rounded_fees]
 
-    return final_sell_price, final_buy_price
+    return final_sell_price, final_buy_price, final_fees
 
 
 def _round_decimal(orig: float, decimal_places: int = 2) -> float:
