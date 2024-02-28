@@ -30,6 +30,7 @@ const web3Onboard = init({
   connect: {
     autoConnectLastWallet: true
   },
+  disableFontDownload: true,
   accountCenter: {desktop: {enabled: false}, mobile: {enabled: false}}
 })
 
