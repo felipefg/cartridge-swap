@@ -8,6 +8,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 function DepositModal() {
     const [showDepositModal, setShowDepositModal] = useState(false);
     const [submitProgress, setSubmitProgress] = useState(false);
+    const [initialized, setInitialized] = useState(false);
     const [amount, setAmount] = useState(10);
     const [{ wallet }] = useConnectWallet();
     const {walletBalance, updateWalletBalance, depositWalletBalance} = useContext(balanceContext);
@@ -31,10 +32,11 @@ function DepositModal() {
         if (wallet) {
             updateWalletBalance();
         }
+        setInitialized(true);
     }, [wallet, updateWalletBalance])
 
     return (<>
-        { (wallet && walletBalance >= 0) && <>
+        { (initialized && wallet && walletBalance >= 0) && <>
                 <div className="p-2">
                     <div>Balance</div>
                     <div className="text-blue-700">

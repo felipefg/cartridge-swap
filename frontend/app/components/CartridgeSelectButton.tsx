@@ -32,7 +32,7 @@ function CartridgeSelectButton({cartridge, index}:{cartridge:Cartridge, index:nu
                 alt="Cartridge Screenshot"
                 style={{objectFit: "contain", background: "black", width: "256px", height: "192px", imageRendering: "pixelated"}}
                 src={cartridge.cover? `data:image/png;base64,${cartridge.cover}`:"/logo.png"}/>
-                {('owned_copies' in cartridge && cartridge.owned_copies > 0) &&
+                {(cartridge.owned_copies !== undefined && cartridge.owned_copies > 0) &&
                     <div className="absolute bottom-0 end-0 bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 mb-2">Owned</div>}
             </div>
             <div className="flex items-center mt-1">
