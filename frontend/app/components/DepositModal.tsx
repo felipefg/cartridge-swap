@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useContext } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { balanceContext } from './balanceProvider';
 import { useConnectWallet } from "@web3-onboard/react";
 
@@ -23,9 +23,11 @@ function DepositModal() {
         closeDepositModal();
     }
 
-    if (wallet) {
-        updateWalletBalance();
-    }
+    useEffect(() => {
+        if (wallet) {
+            updateWalletBalance();
+        }
+    }, [wallet])
 
     return (<>
         { (wallet && walletBalance >= 0) && <>
