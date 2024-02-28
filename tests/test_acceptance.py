@@ -57,10 +57,45 @@ def insert_cartridge_payload() -> bytes:
     return encode_model(model, packed=False)
 
 
-def test_should_insert_cartridge(
+def test_should_fail_insert_cartridge_without_funds(
         dapp_client: TestClient,
         insert_cartridge_payload: bytes):
 
+    header = ABIFunctionSelectorHeader(
+        function="app.insert_cartridge",
+        argument_types=['uint128', 'uint128', 'uint128', 'uint128', 'bytes']
+    ).to_bytes()
+
+    hex_payload = '0x' + (header + insert_cartridge_payload).hex()
+    dapp_client.send_advance(hex_payload=hex_payload,
+                             msg_sender=DEVELOPER_ADDRESS)
+
+    assert not dapp_client.rollup.status
+
+
+def test_should_insert_cartridge_with_funds(
+        dapp_client: TestClient,
+        insert_cartridge_payload: bytes):
+
+    # Deposit funds
+    deposit = DepositErc20Payload(
+        result=True,
+        token=ERC20_USDC_ADDRESS,
+        sender=DEVELOPER_ADDRESS,
+        amount=5 * USDC_UNIT,
+        execLayerData=b'',
+    )
+    hex_payload = '0x' + encode_model(deposit, packed=True).hex()
+
+    # Send deposit
+    dapp_client.send_advance(
+        hex_payload=hex_payload,
+        msg_sender=ERC20_PORTAL_ADDRESS,
+    )
+
+    assert dapp_client.rollup.status
+
+    # Insert Cartridge
     header = ABIFunctionSelectorHeader(
         function="app.insert_cartridge",
         argument_types=['uint128', 'uint128', 'uint128', 'uint128', 'bytes']

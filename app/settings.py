@@ -21,3 +21,4 @@ class AppSettings:
     treasury_addr = '0xffffffffffffffffffffffffffffffffffffffff'
     developer_fee = 0.1
     treasury_fee = 0.025
+    token_decimals = 6

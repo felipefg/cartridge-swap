@@ -18,6 +18,7 @@ from cartesapp.wallet import dapp_wallet
 from .riv import riv_get_cartridge_info, riv_get_cartridge_screenshot, riv_get_cartridges_path, riv_get_cover, riv_get_cartridge_outcard, replay_log
 from .settings import AppSettings
 from .bonding_curve import get_prices
+from .upload_price import get_upload_price
 
 LOGGER = logging.getLogger(__name__)
 USDC_UNIT = int(1e6)
@@ -243,6 +244,33 @@ def initialize_data():
 def insert_cartridge(payload: InsertCartridgePayload) -> bool:
     metadata = get_metadata()
 
+    dev_addr = metadata.msg_sender.lower()
+    balance = _get_erc20_balance(dev_addr, AppSettings.token_addr)
+    cartridge_size = len(payload.data)
+
+    upload_price = get_upload_price(
+        cartridge_bytes=cartridge_size,
+        initial_supply=payload.initial_supply
+    )
+    upload_price = int(upload_price * 10**AppSettings.token_decimals)
+
+    if upload_price > balance:
+        msg = (
+            f"Not enough funds for upload. {dev_addr=} {cartridge_size=} "
+            f"{upload_price=}"
+        )
+        LOGGER.error(msg)
+        add_output(msg, tags=['error'])
+        return False
+
+    LOGGER.info(f"Paying upload fee to treasury. {dev_addr=} {upload_price=}")
+    dapp_wallet.transfer_erc20(
+        token=AppSettings.token_addr,
+        sender=dev_addr,
+        receiver=AppSettings.treasury_addr,
+        amount=upload_price
+    )
+
     LOGGER.info("Saving cartridge...")
     try:
         cartridge_id = create_cartridge(payload,**get_metadata().dict())
@@ -254,7 +282,7 @@ def insert_cartridge(payload: InsertCartridgePayload) -> bool:
 
     cartridge_event = CartridgeInserted(
         cartridge_id = cartridge_id,
-        user_address = metadata.msg_sender,
+        user_address = dev_addr,
         timestamp = metadata.timestamp
     )
     out_tags = ['cartridge','insert_cartridge',cartridge_id]
