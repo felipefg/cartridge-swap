@@ -184,6 +184,10 @@ function CartridgeInfo() {
 
     async function submitLog() {
         // replay({car});
+        if(!(selectedCartridge.owned_copies > 0)) {
+            alert("You must own the cartridge to submit your gameplay.");
+            return;
+        }
         if (!selectedCartridge || !selectedCartridge.gameplayLog){
             alert("No gameplay data.");
             return;
@@ -206,7 +210,7 @@ function CartridgeInfo() {
 
     async function submitLogWithAlias(userAliasToSubmit:string = "") {
         // replay({car});
-        if (!selectedCartridge || !selectedCartridge.gameplayLog){
+        if (!selectedCartridge || !selectedCartridge.gameplayLog || !(selectedCartridge.owned_copies > 0)){
             return;
         }
         if (!selectedCartridge.outcard || !selectedCartridge.outhash ){

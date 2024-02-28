@@ -74,7 +74,6 @@ RUN ln -s /rivos/usr/bin/bwrap /usr/bin/ && \
 # install dapp
 WORKDIR /opt/cartesi/dapp
 
-COPY main.py .
 COPY app app
 COPY misc/Rives-Logo.png misc/Rives-Logo.png
 COPY misc/snake.sqfs misc/snake.sqfs

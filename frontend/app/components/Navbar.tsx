@@ -47,7 +47,11 @@ function Navbar() {
             </Link>
 
             <Link href={"/insert-cartridge"} className={`invisible md:visible h-full grid grid-cols-1 items-center navbar-item ${pathname === "/insert-cartridge" ? "link-active" : "" }`}>
-                Upload Cartridge
+                Upload
+            </Link>
+
+            <Link href={"/stats"} className={`invisible md:visible h-full grid grid-cols-1 items-center navbar-item ${pathname === "/insert-cartridge" ? "link-active" : "" }`}>
+                Stats
             </Link>
 
             <div className='flex-1 flex justify-end'>

@@ -177,18 +177,17 @@ export default function InsertCartridge() {
               </div>
             </RadioGroup>
 
-{/*
             <div className="md:flex md:items-center mb-6">
               <div className="md:w-1/3">
                 <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                  Cost to Store
+                  Storage Cost
                 </label>
               </div>
               <div className="md:w-2/3">
-                <div className="appearance-none border-2 border-blue-500 w-full py-2 px-4 text-blue-400">$100</div>
+                <div className="appearance-none border-2 border-blue-500 w-full py-2 px-4 text-blue-400">${initialSupply*1 + (cartridgeData ? Math.ceil(cartridgeData.length / 4096)*4 : 0)}</div>
               </div>
             </div>
-            */}
+
           </div>
 
           <button className="btn w-48" onClick={uploadCartridge}>
