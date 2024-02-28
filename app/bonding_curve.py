@@ -52,15 +52,16 @@ def get_prices(
         exponent=exponent
     )
 
-    if total_supply < initial_supply:
-        # Below the initial_supply, all the revenue goes to the creator, and no
-        # one can sell
-        buy_price = sell_price
-        sell_price = 0
-        final_sell_price = 0
-    else:
+    buy_price = sell_price
+
+    if total_supply >= initial_supply:
         # After initial_supply, buy price is marked up by the fee
         buy_price = (1 + total_fees) * sell_price
+
+    if total_supply <= initial_supply:
+        # Below the initial_supply, all the revenue goes to the creator, and no
+        # one can sell
+        sell_price = 0
 
     sell_price = _round_decimal(sell_price, decimal_places=round_decimals)
     buy_price = _round_decimal(buy_price, decimal_places=round_decimals)
