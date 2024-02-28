@@ -45,9 +45,9 @@ def insert_cartridge_payload() -> bytes:
 
     model = InsertCartridgePayload(
         base_price=50 * USDC_UNIT,
-        initial_supply=1000,
+        initial_supply=1,
         smoothing_factor=30,
-        exponent=150,
+        exponent=2000,
         data=cartridge_data
     )
 

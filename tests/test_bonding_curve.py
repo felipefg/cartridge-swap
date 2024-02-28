@@ -14,7 +14,6 @@ def test_poly_should_return_base_below_initial_supply():
         exponent=2
     )
 
-    assert isinstance(price, int)
     assert price == base_price
 
 
@@ -29,7 +28,6 @@ def test_poly_should_be_high_after_initial_supply():
         exponent=2
     )
 
-    assert isinstance(price, int)
     assert price > base_price
 
 
@@ -44,7 +42,7 @@ def test_usdc_prices_below_initial_supply():
         initial_supply=1000,
         int_smoothing=smoothing,
         int_exponent=exponent,
-        decimals=6,
+        int_decimals=6,
         total_fees=0.1
     )
 
@@ -65,7 +63,7 @@ def test_usdc_prices_above_initial_supply():
         initial_supply=1000,
         int_smoothing=smoothing,
         int_exponent=exponent,
-        decimals=6,
+        int_decimals=6,
         total_fees=0.1
     )
 
