@@ -141,9 +141,9 @@ def initialize_data():
         cartridge_example_file.close()
         cartridge_payload = InsertCartridgePayload(
             base_price=10 * USDC_UNIT,
-            initial_supply=1000,
-            smoothing_factor=50,
-            exponent=1500,
+            initial_supply=100,
+            smoothing_factor=1280,
+            exponent=1700,
             data=cartridge_example_data
         )
         create_cartridge(
@@ -181,8 +181,8 @@ def initialize_data():
         cartridge_payload = InsertCartridgePayload(
             base_price=30 * USDC_UNIT,
             initial_supply=1000,
-            smoothing_factor=50,
-            exponent=1500,
+            smoothing_factor=1280,
+            exponent=1700,
             data=cartridge_example_data
         )
         create_cartridge(
@@ -199,9 +199,9 @@ def initialize_data():
         cartridge_example_data = cartridge_example_file.read()
         cartridge_payload = InsertCartridgePayload(
             base_price=25 * USDC_UNIT,
-            initial_supply=1000,
-            smoothing_factor=50,
-            exponent=1500,
+            initial_supply=1,
+            smoothing_factor=1280,
+            exponent=1700,
             data=cartridge_example_data
         )
         create_cartridge(
@@ -218,9 +218,9 @@ def initialize_data():
         cartridge_example_data = cartridge_example_file.read()
         cartridge_payload = InsertCartridgePayload(
             base_price=15 * USDC_UNIT,
-            initial_supply=1000,
-            smoothing_factor=50,
-            exponent=1500,
+            initial_supply=100,
+            smoothing_factor=1280,
+            exponent=1700,
             data=cartridge_example_data
         )
         create_cartridge(
