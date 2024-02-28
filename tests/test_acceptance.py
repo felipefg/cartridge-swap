@@ -12,7 +12,9 @@ from cartesi.testclient import TestClient
 from cartesi.abi import encode_model
 from cartesi.models import ABIFunctionSelectorHeader
 
-from app.cartridge import InsertCartridgePayload, BuyCartridgePayload
+from app.cartridge import (
+    InsertCartridgePayload, BuyCartridgePayload, SellCartridgePayload
+)
 
 import logging
 logger = logging.getLogger(__name__)
@@ -307,3 +309,52 @@ def test_user_should_own_cartridge_details(dapp_client: TestClient):
     assert 'owned_copies' in report
     assert isinstance(report['owned_copies'], int)
     assert report['owned_copies'] == 2
+
+
+@pytest.fixture()
+def sell_breakout_cartridge_payload() -> str:
+    model = SellCartridgePayload(id=bytes.fromhex(BREAKOUT_ID))
+    model_bytes = encode_model(model, packed=False)
+
+    header = ABIFunctionSelectorHeader(
+        function="app.sell_cartridge",
+        argument_types=['bytes32']
+    ).to_bytes()
+
+    return '0x' + (header + model_bytes).hex()
+
+
+@pytest.mark.order(after="test_should_buy_second_cartridge")
+def test_user_should_sell_cartridge_above_supply(
+        dapp_client: TestClient,
+        sell_breakout_cartridge_payload):
+    """
+    GIVEN The user owns at least a copy of Breakout
+    AND The total supply is above the initial supply
+    WHEN The user tries to sell one copy
+    THEN The transaction succeeds
+    """
+    dapp_client.send_advance(
+        hex_payload=sell_breakout_cartridge_payload,
+        msg_sender=USER_ADDRESS,
+    )
+
+    assert dapp_client.rollup.status
+
+
+@pytest.mark.order(after="test_user_should_sell_cartridge_above_supply")
+def test_user_should_sell_cartridge_below_supply(
+        dapp_client: TestClient,
+        sell_breakout_cartridge_payload):
+    """
+    GIVEN The user owns at least a copy of Breakout
+    AND The total supply is within the initial supply
+    WHEN The user tries to sell one copy
+    THEN The transaction is rejected
+    """
+    dapp_client.send_advance(
+        hex_payload=sell_breakout_cartridge_payload,
+        msg_sender=USER_ADDRESS,
+    )
+
+    assert not dapp_client.rollup.status

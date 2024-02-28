@@ -65,6 +65,10 @@ class BuyCartridgePayload(BaseModel):
     id: Bytes32
 
 
+class SellCartridgePayload(BaseModel):
+    id: Bytes32
+
+
 class CartridgePayload(BaseModel):
     id: String
     owner: Optional[str]
@@ -351,6 +355,60 @@ def buy_cartridge(payload: BuyCartridgePayload) -> bool:
     cartridge.cartridge_owners.create(user_address=buyer.lower())
 
     return True
+
+
+@mutation()
+def sell_cartridge(payload: BuyCartridgePayload) -> bool:
+    metadata = get_metadata()
+    seller = metadata.msg_sender
+    cartridge_id = payload.id.hex()
+    LOGGER.info('User %s wants to sell cartridge %s', seller, cartridge_id)
+
+    # Get cartridge
+    cartridge = (
+        helpers.select(c for c in Cartridge if c.id == cartridge_id)
+        .first()
+    )
+
+    if cartridge is None:
+        msg = f'Cartridge {cartridge_id} not found. Refusing tx'
+        LOGGER.info(msg)
+        add_output(msg, tags=['error'])
+        return False
+
+    sell, buy, supply = get_prices_supply_for_cartridge(cartridge)
+
+    LOGGER.debug(f'{sell=} {buy=} {supply=}')
+
+    if sell == 0:
+        msg = f'Cartridge {cartridge_id} has zero sell price. Refusing tx'
+        LOGGER.info(msg)
+        add_output(msg, tags=['error'])
+        return False
+
+    cartridge_user = cartridge.cartridge_owners.select(
+        lambda co: co.user_address == seller.lower()
+    ).first()
+
+    if cartridge_user is None:
+        msg = (
+            f'User {seller} does not own a copy of {cartridge_id}. Refusing tx'
+        )
+        LOGGER.info(msg)
+        add_output(msg, tags=['error'])
+        return False
+
+    # TODO: Properly refund the user
+    dapp_wallet.transfer_erc20(
+        token=AppSettings.token_addr,
+        sender=cartridge.user_address,
+        receiver=seller,
+        amount=sell)
+
+    cartridge_user.delete()
+
+    return True
+
 
 ###
 # Queries

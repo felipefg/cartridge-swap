@@ -6,6 +6,11 @@
  */
 
 export interface _Master_ {
+  BalancePayload: BalancePayload;
+  WithdrawErc721Payload: WithdrawErc721Payload;
+  TransferErc721Payload: TransferErc721Payload;
+  TransferErc20Payload: TransferErc20Payload;
+  WalletOutput: WalletOutput;
   WithdrawErc20Payload: WithdrawErc20Payload;
   withdrawErc721: WithdrawErc721;
   Erc721Event: Erc721Event;
@@ -15,11 +20,42 @@ export interface _Master_ {
   Erc20Event: Erc20Event;
   withdrawEther: WithdrawEther;
   EtherEvent: EtherEvent;
-  BalancePayload: BalancePayload;
-  WithdrawErc721Payload: WithdrawErc721Payload;
-  TransferErc721Payload: TransferErc721Payload;
-  TransferErc20Payload: TransferErc20Payload;
-  WalletOutput: WalletOutput;
+}
+export interface BalancePayload {
+  address: string;
+}
+export interface WithdrawErc721Payload {
+  token: string;
+  id: number;
+  execLayerData: string;
+}
+export interface TransferErc721Payload {
+  token: string;
+  receiver: string;
+  id: number;
+  execLayerData: string;
+}
+export interface TransferErc20Payload {
+  token: string;
+  receiver: string;
+  amount: number;
+  execLayerData: string;
+}
+export interface WalletOutput {
+  ether?: number;
+  erc20?: {
+    [k: string]: number;
+  };
+  erc721?: {
+    [k: string]: number[];
+  };
+  erc1155?: {
+    /**
+     * @minItems 2
+     * @maxItems 2
+     */
+    [k: string]: [number[], number[]];
+  };
 }
 export interface WithdrawErc20Payload {
   token: string;
@@ -64,40 +100,4 @@ export interface EtherEvent {
   user: string;
   mod_amount: number;
   balance: number;
-}
-export interface BalancePayload {
-  address: string;
-}
-export interface WithdrawErc721Payload {
-  token: string;
-  id: number;
-  execLayerData: string;
-}
-export interface TransferErc721Payload {
-  token: string;
-  receiver: string;
-  id: number;
-  execLayerData: string;
-}
-export interface TransferErc20Payload {
-  token: string;
-  receiver: string;
-  amount: number;
-  execLayerData: string;
-}
-export interface WalletOutput {
-  ether?: number;
-  erc20?: {
-    [k: string]: number;
-  };
-  erc721?: {
-    [k: string]: number[];
-  };
-  erc1155?: {
-    /**
-     * @minItems 2
-     * @maxItems 2
-     */
-    [k: string]: [number[], number[]];
-  };
 }
