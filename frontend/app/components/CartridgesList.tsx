@@ -1,20 +1,15 @@
-"use client"
-
 import CartridgeSelectButton from './CartridgeSelectButton';
-import { useContex, useState } from 'react';
+import { useContext } from 'react';
 import { cartridges as cartridgerequest} from "../backend-libs/app/lib";
 import { envClient } from '../utils/clientEnv';
 
-function CartridgesList() {
-    const [cartridges, setCartridges] = useState([]);
+const getCartridges = async () => {
+    const cartridges: any[] = (await cartridgerequest({},{decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL,cache:"no-cache"})).data;
+    return cartridges;
+}
 
-    async function updateCartridges() {
-        setCartridges((await cartridgerequest({},{decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL,cache:"no-cache"})).data);
-    }
-
-    if (cartridges.length == 0) {
-        updateCartridges();
-    }
+async function CartridgesList() {
+    let cartridges = await getCartridges();
 
     return (
         <div
