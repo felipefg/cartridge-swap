@@ -52,7 +52,7 @@ def get_prices(
         exponent=exponent
     )
 
-    if total_supply <= initial_supply:
+    if total_supply < initial_supply:
         # Below the initial_supply, all the revenue goes to the creator, and no
         # one can sell
         buy_price = sell_price
