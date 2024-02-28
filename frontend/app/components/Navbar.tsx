@@ -23,7 +23,7 @@ function Navbar() {
 
         setChain({chainId: chains[0].id});
 
-      }, [connectedChain])
+      }, [connectedChain, chains, setChain])
 
 
     useEffect(() => {
@@ -50,7 +50,7 @@ function Navbar() {
                 Upload
             </Link>
 
-            <Link href={"/stats"} className={`invisible md:visible h-full grid grid-cols-1 items-center navbar-item ${pathname === "/insert-cartridge" ? "link-active" : "" }`}>
+            <Link href={"/stats"} className={`invisible md:visible h-full grid grid-cols-1 items-center navbar-item ${pathname === "/stats" ? "link-active" : "" }`}>
                 Stats
             </Link>
 

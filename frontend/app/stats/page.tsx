@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { BalancePayload } from '../backend-libs/app/ifaces';
+import { BalancePayload } from '../backend-libs/wallet/ifaces';
 import { balance } from '../backend-libs/wallet/lib';
 import { envClient } from "../utils/clientEnv";
 
@@ -9,7 +9,7 @@ export default function Stats() {
   const [protocolBalance, setProtocolBalance] = useState(0);
   const [treasuryBalance, setTreasuryBalance] = useState(0);
 
-  async function getBalance(address) {
+  async function getBalance(address: string) {
     const input: BalancePayload = {address: address}
     const report = await balance(input, {decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL});
     if (report.erc20 && report.erc20[envClient.TOKEN_ADDR.toLowerCase()]) {

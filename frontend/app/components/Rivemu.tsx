@@ -110,9 +110,10 @@ function Rivemu() {
                 src={selectedCartridge?.cover? `data:image/png;base64,${selectedCartridge.cover}`:"/logo.png"}
                 /> : <></>}
 
-                <span className='absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white'
-                    style={{backgroundColor: "#8b5cf6", padding: "10px"}}>Click to Play!</span>
-
+                <div className='absolute top-1/2 left-1/2 w-full h-full transform -translate-x-1/2 -translate-y-1/2 text-white'
+                    style={{backgroundColor: "#000000aa", padding: "10px"}}>
+                    <div class="p-4 absolute inset-0 flex items-center justify-center">Click to Play!</div>
+                </div>
             </button>
         );
     }

@@ -9,16 +9,9 @@ import { fontPressStart2P } from '../utils/font';
 import { useConnectWallet } from "@web3-onboard/react";
 import Image from 'next/image';
 
-function CartridgeSelectButton({cartridge, index, updateCartridges}:{cartridge:Cartridge, index:number}) {
+function CartridgeSelectButton({cartridge, index}:{cartridge:Cartridge, index:number}) {
     const {selectedCartridge, changeCartridge} = useContext(selectedCartridgeContext);
     const [{ wallet }] = useConnectWallet();
-
-    useEffect(() => {
-        // const initialSelection = async () => {
-        //    await handleCartridgeSelection({} as React.MouseEvent<HTMLElement>);
-        // }
-        // if (index == 0 && !selectedCartridge) initialSelection();
-    })
 
     const handleCartridgeSelection = async (e:React.MouseEvent<HTMLElement>) => {
         let wallet_addr = wallet ? wallet.accounts[0].address.toLowerCase() : undefined;
@@ -39,7 +32,7 @@ function CartridgeSelectButton({cartridge, index, updateCartridges}:{cartridge:C
                 alt="Cartridge Screenshot"
                 style={{objectFit: "contain", background: "black", width: "256px", height: "192px", imageRendering: "pixelated"}}
                 src={cartridge.cover? `data:image/png;base64,${cartridge.cover}`:"/logo.png"}/>
-                {cartridge.owned_copies > 0 &&
+                {('owned_copies' in cartridge && cartridge.owned_copies > 0) &&
                     <div className="absolute bottom-0 end-0 bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 mb-2">Owned</div>}
             </div>
             <div className="flex items-center mt-1">

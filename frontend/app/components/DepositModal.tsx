@@ -3,9 +3,11 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { balanceContext } from './balanceProvider';
 import { useConnectWallet } from "@web3-onboard/react";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function DepositModal() {
     const [showDepositModal, setShowDepositModal] = useState(false);
+    const [submitProgress, setSubmitProgress] = useState(false);
     const [amount, setAmount] = useState(10);
     const [{ wallet }] = useConnectWallet();
     const {walletBalance, updateWalletBalance, depositWalletBalance} = useContext(balanceContext);
@@ -19,7 +21,9 @@ function DepositModal() {
     }
 
     async function deposit() {
+        setSubmitProgress(true);
         await depositWalletBalance(amount * 1000000);
+        setSubmitProgress(false);
         closeDepositModal();
     }
 
@@ -27,7 +31,7 @@ function DepositModal() {
         if (wallet) {
             updateWalletBalance();
         }
-    }, [wallet])
+    }, [wallet, updateWalletBalance])
 
     return (<>
         { (wallet && walletBalance >= 0) && <>
@@ -57,7 +61,7 @@ function DepositModal() {
                                     <legend>
                                         Amount
                                     </legend>
-                                    <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />
+                                    <input type="number" value={amount} onChange={e => setAmount(parseFloat(e.target.value))} />
                                 </div>
                             </fieldset>
                             <div className="flex items-center justify-end pb-2 pr-6">
@@ -75,6 +79,7 @@ function DepositModal() {
                                 >
                                     Submit
                                 </button>
+                                {submitProgress && <CircularProgress className="ml-2"/>}
                             </div>
                         </div>
                     </div>

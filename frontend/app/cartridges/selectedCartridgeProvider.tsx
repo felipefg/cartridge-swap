@@ -52,9 +52,11 @@ export function SelectedCartridgeProvider({ children }:{ children: React.ReactNo
     }
 
     const updateCartridge = async () => {
-        let wallet_addr = wallet ? wallet.accounts[0].address.toLowerCase() : undefined;
-        const cartridgeWithInfo = await cartridgeInfo({id:selectedCartridge.id, owner:wallet_addr},{decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL,cache:"no-cache"});
-        changeCartridge(cartridgeWithInfo);
+        if (selectedCartridge) {
+            let wallet_addr = wallet ? wallet.accounts[0].address.toLowerCase() : undefined;
+            const cartridgeWithInfo = await cartridgeInfo({id:selectedCartridge.id, owner:wallet_addr},{decode:true, cartesiNodeUrl: envClient.CARTESI_NODE_URL,cache:"no-cache"});
+            changeCartridge(cartridgeWithInfo);
+        }
     }
 
     const playCartridge = () => {

@@ -11,13 +11,15 @@ import { InsertCartridgePayload } from '../backend-libs/app/ifaces';
 import { insertCartridge } from '../backend-libs/app/lib';
 import { envClient } from "../utils/clientEnv";
 import { balanceContext } from '../components/balanceProvider';
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function InsertCartridge() {
-  let [cartridgeData, setCartridgeData] = useState(null);
-  let [cartridgeName, setCartridgeName] = useState(null);
-  let [basePrice, setBasePrice] = useState(10);
-  let [initialSupply, setInitialSupply] = useState(100);
-  let [curve, setCurve] = useState("standard");
+  const [cartridgeData, setCartridgeData] = useState<Uint8Array|null>(null);
+  const [cartridgeName, setCartridgeName] = useState<string|null>(null);
+  const [basePrice, setBasePrice] = useState(10);
+  const [initialSupply, setInitialSupply] = useState(100);
+  const [submitProgress, setSubmitProgress] = useState(false);
+  const [curve, setCurve] = useState("standard");
   const [{ wallet }, connect] = useConnectWallet();
   const {walletBalance, updateWalletBalance} = useContext(balanceContext);
 
@@ -60,6 +62,7 @@ export default function InsertCartridge() {
         return;
     }
 
+    setSubmitProgress(true);
     try {
       let smoothingFactor = 1280;
       let exponent = 1700;
@@ -83,10 +86,11 @@ export default function InsertCartridge() {
       if (receipt == undefined || receipt.events == undefined)
           throw new Error("Couldn't send transaction");
     } catch (error) {
-        await alert(error.message);
+        await alert((error as Error).message);
     }
     await updateWalletBalance();
-    window.location = '/cartridges';
+    setSubmitProgress(false);
+    window.location.href = '/cartridges';
   }
 
   return (
@@ -127,7 +131,7 @@ export default function InsertCartridge() {
               <div className="md:w-2/3">
                 <input type="number" id="number-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm  block w-full p-2.5" required
                   value={basePrice}
-                  onChange={e => setBasePrice(e.target.value)}/>
+                  onChange={e => setBasePrice(parseFloat(e.target.value))}/>
 
               </div>
             </div>
@@ -141,7 +145,7 @@ export default function InsertCartridge() {
               <div className="md:w-2/3">
                 <input type="number" id="number-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm  block w-full p-2.5" required
                   value={initialSupply}
-                  onChange={e => setInitialSupply(e.target.value)}/>
+                  onChange={e => setInitialSupply(parseFloat(e.target.value))}/>
               </div>
             </div>
 
@@ -190,9 +194,12 @@ export default function InsertCartridge() {
 
           </div>
 
-          <button className="btn w-48" onClick={uploadCartridge}>
-            Upload Cartridge
-          </button>
+          <div className="flex">
+            <button className="btn w-128" onClick={uploadCartridge}>
+              Upload Cartridge
+            </button>
+            {submitProgress && <CircularProgress className="ml-4"/>}
+          </div>
         </div>
       </section>
     </main>
