@@ -16,3 +16,4 @@ class AppSettings:
     rivemu_path = None
     cartridges_path = "cartridges"
     scoreboard_ttl = 7776000 # 90 days
+    token_addr = None

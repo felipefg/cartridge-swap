@@ -21,7 +21,6 @@ from .bonding_curve import get_prices
 
 LOGGER = logging.getLogger(__name__)
 USDC_UNIT = int(1e6)
-ERC20_TOKEN_ADDRESS = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
 
 ###
 # Model
@@ -328,7 +327,7 @@ def buy_cartridge(payload: BuyCartridgePayload) -> bool:
         add_output(msg, tags=['error'])
         return False
 
-    balance = _get_erc20_balance(buyer.lower(), ERC20_TOKEN_ADDRESS)
+    balance = _get_erc20_balance(buyer.lower(), AppSettings.token_addr)
 
     if balance < buy:
         msg = (
@@ -344,7 +343,7 @@ def buy_cartridge(payload: BuyCartridgePayload) -> bool:
 
     # TODO: Properly split between game developer and foundation
     dapp_wallet.transfer_erc20(
-        token=ERC20_TOKEN_ADDRESS,
+        token=AppSettings.token_addr,
         sender=buyer,
         receiver=cartridge.user_address,
         amount=buy)
