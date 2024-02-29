@@ -1,8 +1,8 @@
 # Cartridge Swap
 
-The Cartridge Swap is both a marketplace of games and a fantasy console that allows users to upload and play small of games that are emulated by the Cartesi Machine.
+Cartridge Swap is a marketplace for games running in an onchain fantasy console. It allows players to collect and play fun provable games that are emulated by the Cartesi Machine. Builders can easily upload their games and select a sales model for their cartridges.
 
-After buying a game, player can record their gameplays in the browser then submit the game moves onchain so the session will be replayed a Cartesi Rollups DApp to generate a provable score, mint a NFT of their score and participate in the game leaderboard.
+After buying a game, a player's gameplay can be submitted onchain for verification by Cartesi Rollup nodes. After verification a user can then mint his score as NFT and join the leaderboard.
 
 DISCLAIMERS
 
