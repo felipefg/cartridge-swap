@@ -1,16 +1,18 @@
-# World Arcade
+# Cartridge Swap
 
-```
-Cartesi Rollups Node version: 1.2.x (sunodo version 0.10.x)
-```
+The Cartridge Swap is both a marketplace of games and a fantasy console that allows users to upload and play small of games that are emulated by the Cartesi Machine.
 
-The World Arcade allows users to play riscv-binaries of games on a RISC-v Cartesi Machine on the browser, submit the game moves onchain so the session will be replayed a Cartesi Rollups DApp to generate a provable score. Naturally you can upload you own games.
+After buying a game, player can record their gameplays in the browser then submit the game moves onchain so the session will be replayed a Cartesi Rollups DApp to generate a provable score, mint a NFT of their score and participate in the game leaderboard.
 
 DISCLAIMERS
 
 For now, this is not a final product and should not be used as one.
 
 ## Requirements
+
+```
+Cartesi Rollups Node version: 1.2.x (sunodo version 0.10.x)
+```
 
 - [npm](https://docs.npmjs.com/cli/v9/configuring-npm/install) to install dependencies and run the frontend
 - [Sunodo](https://github.com/sunodo/sunodo) to build and run the DApp backend
