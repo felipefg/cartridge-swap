@@ -153,7 +153,7 @@ def initialize_data():
         )
         create_cartridge(
             cartridge_payload,
-            msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94"
+            msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
         )
         if AppSettings.rivemu_path is None:
             os.remove('misc/snake.sqfs')
@@ -173,7 +173,7 @@ def initialize_data():
     #     )
     #     create_cartridge(
     #         cartridge_payload,
-    #         msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94"
+    #         msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
     #     )
     #     if AppSettings.rivemu_path is None:
     #         os.remove('misc/freedoom.sqfs')
@@ -192,7 +192,7 @@ def initialize_data():
         )
         create_cartridge(
             cartridge_payload,
-            msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94"
+            msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
         )
         if AppSettings.rivemu_path is None:
             os.remove('misc/antcopter.sqfs')
@@ -211,7 +211,7 @@ def initialize_data():
         )
         create_cartridge(
             cartridge_payload,
-            msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94"
+            msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
         )
         if AppSettings.rivemu_path is None:
             os.remove('misc/monky.sqfs')
@@ -230,7 +230,7 @@ def initialize_data():
         )
         create_cartridge(
             cartridge_payload,
-            msg_sender="0xAf1577F6A113da0bc671a59D247528811501cF94"
+            msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
         )
         if AppSettings.rivemu_path is None:
             os.remove('misc/2048.sqfs')

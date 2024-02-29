@@ -428,27 +428,17 @@ function CartridgeInfo() {
             <div className="md:w-[512px] lg:w-[768px]">
                 <div className="text-white mb-2">
                     <span className='text-4xl'>{selectedCartridge.name}</span>
+                    <div className='flex space-x-2'>
+                        <span>By</span>
+                        <ul>
+                            <li>
+                                <span>
+                                    {selectedCartridge.user_address}
+                                </span>
+                            </li>
+                        </ul>
 
-                    {
-                    !(selectedCartridge.info?.authors)?
-                        <div className='h-6'></div>
-                    :
-                    (
-                        <div className='flex space-x-2'>
-                            <span>By</span>
-                            <ul>
-                                {selectedCartridge.info?.authors?.map((author, index) => (
-                                    <li key={author.name}>
-                                        <Link href={author.link}>
-                                            {author.name}{index !== selectedCartridge.info!.authors!.length-1? ",": ""}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-
-                        </div>
-                    )
-                    }
+                    </div>
                 </div>
 
 
