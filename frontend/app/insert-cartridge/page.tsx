@@ -76,7 +76,7 @@ export default function InsertCartridge() {
 
       const signer = new ethers.providers.Web3Provider(wallet.provider, 'any').getSigner();
       const inputData: InsertCartridgePayload = {
-          base_price: basePrice * 1000000,
+          base_price: basePrice * envClient.TOKEN_DECIMALS,
           initial_supply: initialSupply * 1,
           smoothing_factor: smoothingFactor,
           exponent: exponent,

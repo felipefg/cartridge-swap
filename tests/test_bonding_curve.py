@@ -1,6 +1,6 @@
 from app import bonding_curve
 
-USDC_UNIT = 10**6
+TOKEN_DECIMALS = 10**6
 
 
 def test_poly_should_return_base_below_initial_supply():
@@ -32,7 +32,7 @@ def test_poly_should_be_high_after_initial_supply():
 
 
 def test_usdc_prices_below_initial_supply():
-    base_price = int(10 * USDC_UNIT)
+    base_price = int(10 * TOKEN_DECIMALS)
     smoothing = 5000
     exponent = 2000
 
@@ -54,7 +54,7 @@ def test_usdc_prices_below_initial_supply():
 
 
 def test_usdc_prices_above_initial_supply():
-    base_price = int(10 * USDC_UNIT)
+    base_price = int(10 * TOKEN_DECIMALS)
     smoothing = 5000
     exponent = 2000
 

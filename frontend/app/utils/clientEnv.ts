@@ -1,4 +1,4 @@
-import { str, envsafe, url } from 'envsafe';
+import { str, num, envsafe, url } from 'envsafe';
 
 
 export const envClient = envsafe({
@@ -21,5 +21,9 @@ export const envClient = envsafe({
   NFT_ADDR: str({
     input: process.env.NEXT_PUBLIC_NFT_ADDR,
     desc: "Rives Score NFT ETH address."
+  }),
+  TOKEN_DECIMALS: num({
+    input: 1000,
+    desc: "USDC unit."
   })
 })

@@ -33,14 +33,14 @@ export default function Stats() {
         <div className="p-2">
             <div className="text-gray-400">Protocol Balance</div>
             <div className="text-blue-700">
-                <span>${(protocolBalance / 1000000).toFixed(2)}</span>
+                <span>${(protocolBalance / envClient.TOKEN_DECIMALS).toFixed(2)}</span>
             </div>
         </div>
 
         <div className="p-2">
             <div className="text-gray-400">Treasury Balance</div>
             <div className="text-blue-700">
-                <span>${(treasuryBalance / 1000000).toFixed(2)}</span>
+                <span>${(treasuryBalance / envClient.TOKEN_DECIMALS).toFixed(2)}</span>
             </div>
         </div>
       </section>

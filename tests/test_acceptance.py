@@ -19,7 +19,7 @@ from app.cartridge import (
 import logging
 logger = logging.getLogger(__name__)
 
-USDC_UNIT = int(1e6)
+TOKEN_DECIMALS = int(1e6)
 ERC20_PORTAL_ADDRESS = "0x9C21AEb2093C32DDbC53eEF24B873BDCd1aDa1DB"
 ERC20_USDC_ADDRESS = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
 USER_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
@@ -47,7 +47,7 @@ def insert_cartridge_payload() -> bytes:
         cartridge_data = fin.read()
 
     model = InsertCartridgePayload(
-        base_price=50 * USDC_UNIT,
+        base_price=50 * TOKEN_DECIMALS,
         initial_supply=1,
         smoothing_factor=30,
         exponent=2000,
@@ -82,7 +82,7 @@ def test_should_insert_cartridge_with_funds(
         result=True,
         token=ERC20_USDC_ADDRESS,
         sender=DEVELOPER_ADDRESS,
-        amount=5 * USDC_UNIT,
+        amount=5 * TOKEN_DECIMALS,
         execLayerData=b'',
     )
     hex_payload = '0x' + encode_model(deposit, packed=True).hex()
@@ -166,7 +166,7 @@ def test_should_deposit_to_wallet(dapp_client: TestClient):
         result=True,
         token=ERC20_USDC_ADDRESS,
         sender=USER_ADDRESS,
-        amount=1000 * USDC_UNIT,
+        amount=1000 * TOKEN_DECIMALS,
         execLayerData=b'',
     )
     hex_payload = '0x' + encode_model(deposit, packed=True).hex()
@@ -192,7 +192,7 @@ def test_should_deposit_to_wallet(dapp_client: TestClient):
     assert isinstance(report, dict)
 
     assert isinstance(report.get('erc20'), dict)
-    assert report['erc20'].get(ERC20_USDC_ADDRESS.lower()) == 1000 * USDC_UNIT
+    assert report['erc20'].get(ERC20_USDC_ADDRESS.lower()) == 1000 * TOKEN_DECIMALS
 
 
 @pytest.fixture()
@@ -287,7 +287,7 @@ def test_developer_should_receive_fee(dapp_client: TestClient):
     report = bytes.fromhex(report[2:])
     report = json.loads(report.decode('utf-8'))
     assert isinstance(report, dict)
-    assert report['erc20'][ERC20_USDC_ADDRESS.lower()] == 50 * USDC_UNIT
+    assert report['erc20'][ERC20_USDC_ADDRESS.lower()] == 50 * TOKEN_DECIMALS
 
 
 @pytest.mark.order(after="test_should_buy_cartridge")

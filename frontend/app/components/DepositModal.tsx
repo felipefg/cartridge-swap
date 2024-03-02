@@ -4,6 +4,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import { balanceContext } from './balanceProvider';
 import { useConnectWallet } from "@web3-onboard/react";
 import CircularProgress from "@mui/material/CircularProgress";
+import { envClient } from "../utils/clientEnv";
 
 function DepositModal() {
     const [showDepositModal, setShowDepositModal] = useState(false);
@@ -23,7 +24,7 @@ function DepositModal() {
 
     async function deposit() {
         setSubmitProgress(true);
-        await depositWalletBalance(amount * 1000000);
+        await depositWalletBalance(amount * envClient.TOKEN_DECIMALS);
         setSubmitProgress(false);
         closeDepositModal();
     }
@@ -40,7 +41,7 @@ function DepositModal() {
                 <div className="p-2">
                     <div>Balance</div>
                     <div className="text-blue-700">
-                        <span>${(walletBalance / 1000000).toFixed(2)}</span>
+                        <span>${(walletBalance / envClient.TOKEN_DECIMALS).toFixed(2)}</span>
                     </div>
                 </div>
                 <button className="btn btn-deposit" onClick={openDepositModal}>Deposit</button>

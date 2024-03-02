@@ -21,7 +21,7 @@ from .bonding_curve import get_prices
 from .upload_price import get_upload_price
 
 LOGGER = logging.getLogger(__name__)
-USDC_UNIT = int(1e6)
+TOKEN_DECIMALS = int(1e3)
 
 ###
 # Model
@@ -145,7 +145,7 @@ def initialize_data():
         cartridge_example_data = cartridge_example_file.read()
         cartridge_example_file.close()
         cartridge_payload = InsertCartridgePayload(
-            base_price=10 * USDC_UNIT,
+            base_price=10 * TOKEN_DECIMALS,
             initial_supply=100,
             smoothing_factor=1280,
             exponent=1700,
@@ -165,7 +165,7 @@ def initialize_data():
         cartridge_example_data = cartridge_example_file.read()
         cartridge_example_file.close()
         cartridge_payload = InsertCartridgePayload(
-            base_price=10,
+            base_price=10 * TOKEN_DECIMALS,
             initial_supply=1000,
             smoothing_factor=50,
             exponent=1500,
@@ -184,7 +184,7 @@ def initialize_data():
         cartridge_example_file = open('misc/antcopter.sqfs', 'rb')
         cartridge_example_data = cartridge_example_file.read()
         cartridge_payload = InsertCartridgePayload(
-            base_price=30 * USDC_UNIT,
+            base_price=30 * TOKEN_DECIMALS,
             initial_supply=1000,
             smoothing_factor=1280,
             exponent=1700,
@@ -203,7 +203,7 @@ def initialize_data():
         cartridge_example_file = open('misc/monky.sqfs', 'rb')
         cartridge_example_data = cartridge_example_file.read()
         cartridge_payload = InsertCartridgePayload(
-            base_price=25 * USDC_UNIT,
+            base_price=25 * TOKEN_DECIMALS,
             initial_supply=1,
             smoothing_factor=1280,
             exponent=1700,
@@ -222,7 +222,7 @@ def initialize_data():
         cartridge_example_file = open('misc/2048.sqfs', 'rb')
         cartridge_example_data = cartridge_example_file.read()
         cartridge_payload = InsertCartridgePayload(
-            base_price=15 * USDC_UNIT,
+            base_price=15 * TOKEN_DECIMALS,
             initial_supply=100,
             smoothing_factor=1280,
             exponent=1700,
@@ -241,7 +241,7 @@ def initialize_data():
         cartridge_example_file = open('misc/tetrix.sqfs', 'rb')
         cartridge_example_data = cartridge_example_file.read()
         cartridge_payload = InsertCartridgePayload(
-            base_price=25 * USDC_UNIT,
+            base_price=25 * TOKEN_DECIMALS,
             initial_supply=100,
             smoothing_factor=1280,
             exponent=1700,
