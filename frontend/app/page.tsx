@@ -12,7 +12,7 @@ export default function Home() {
 
         <div className=' max-w-[640px] text-center text-white'>
           <h2 className='mt-6 text-xl'>
-            Cartridg Swap
+            Cartridge Swap
           </h2>
 
           <p className="mt-6">
