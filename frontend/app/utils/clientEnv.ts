@@ -23,7 +23,7 @@ export const envClient = envsafe({
     desc: "Rives Score NFT ETH address."
   }),
   TOKEN_DECIMALS: num({
-    input: 1000,
+    input: process.env.NEXT_PUBLIC_TOKEN_DECIMALS,
     desc: "USDC unit."
   })
 })

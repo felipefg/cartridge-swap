@@ -61,6 +61,10 @@ export default function InsertCartridge() {
         await alert("Choose a cartridge file first.");
         return;
     }
+    if (walletBalance < basePrice * envClient.TOKEN_DECIMALS) {
+        await alert("Not enough funds in the wallet, please deposit first.");
+        return;
+    }
 
     setSubmitProgress(true);
     try {

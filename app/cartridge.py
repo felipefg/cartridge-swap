@@ -165,7 +165,7 @@ def initialize_data():
         cartridge_example_data = cartridge_example_file.read()
         cartridge_example_file.close()
         cartridge_payload = InsertCartridgePayload(
-            base_price=10 * TOKEN_DECIMALS,
+            base_price=40 * TOKEN_DECIMALS,
             initial_supply=1000,
             smoothing_factor=50,
             exponent=1500,
@@ -184,7 +184,7 @@ def initialize_data():
         cartridge_example_file = open('misc/antcopter.sqfs', 'rb')
         cartridge_example_data = cartridge_example_file.read()
         cartridge_payload = InsertCartridgePayload(
-            base_price=30 * TOKEN_DECIMALS,
+            base_price=20 * TOKEN_DECIMALS,
             initial_supply=1000,
             smoothing_factor=1280,
             exponent=1700,
