@@ -351,7 +351,9 @@ def buy_cartridge(payload: BuyCartridgePayload) -> bool:
         add_output(msg, tags=['error'])
         return False
 
-    sell, buy, fees, supply = get_prices_supply_for_cartridge(cartridge)
+    sell, buy, fees, supply = get_prices_supply_for_cartridge(
+        cartridge,
+    )
 
     if buy == 0:
         msg = f'Cartridge {cartridge_id} has zero buy price. Refusing tx'
@@ -643,6 +645,7 @@ def get_prices_supply_for_cartridge(cartridge: Cartridge):
         initial_supply=cartridge.initial_supply,
         int_smoothing=cartridge.smoothing_factor,
         int_exponent=cartridge.exponent,
+        int_decimals=AppSettings.token_decimals,
         fees=[AppSettings.developer_fee, AppSettings.treasury_fee],
     )
 

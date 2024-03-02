@@ -94,6 +94,8 @@ echo "#!/bin/sh
 set -e
 
 export PYTHONPATH=${PYTHONPATH}
+export TOKEN_ADDR="0x036cbd53842c5426634e7929541ec2318f3dcf7e"
+export TOKEN_DECIMALS=4
 cartesapp run app --log-level info
 " > entrypoint.sh && \
 chmod +x entrypoint.sh
