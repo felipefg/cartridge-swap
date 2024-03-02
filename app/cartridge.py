@@ -155,6 +155,7 @@ def initialize_data():
             cartridge_payload,
             msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
         )
+        _add_cartridge_price_to_treasury(cartridge_payload)
         if AppSettings.rivemu_path is None:
             os.remove('misc/snake.sqfs')
     except Exception as e:
@@ -175,6 +176,7 @@ def initialize_data():
             cartridge_payload,
             msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
         )
+        _add_cartridge_price_to_treasury(cartridge_payload)
         if AppSettings.rivemu_path is None:
             os.remove('misc/freedoom.sqfs')
     except Exception as e:
@@ -194,6 +196,7 @@ def initialize_data():
             cartridge_payload,
             msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
         )
+        _add_cartridge_price_to_treasury(cartridge_payload)
         if AppSettings.rivemu_path is None:
             os.remove('misc/antcopter.sqfs')
     except Exception as e:
@@ -213,6 +216,7 @@ def initialize_data():
             cartridge_payload,
             msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
         )
+        _add_cartridge_price_to_treasury(cartridge_payload)
         if AppSettings.rivemu_path is None:
             os.remove('misc/monky.sqfs')
     except Exception as e:
@@ -232,6 +236,7 @@ def initialize_data():
             cartridge_payload,
             msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
         )
+        _add_cartridge_price_to_treasury(cartridge_payload)
         if AppSettings.rivemu_path is None:
             os.remove('misc/2048.sqfs')
     except Exception as e:
@@ -251,6 +256,7 @@ def initialize_data():
             cartridge_payload,
             msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
         )
+        _add_cartridge_price_to_treasury(cartridge_payload)
         if AppSettings.rivemu_path is None:
             os.remove('misc/tetrix.sqfs')
     except Exception as e:
@@ -330,25 +336,6 @@ def remove_cartridge(payload: RemoveCartridgePayload) -> bool:
     emit_event(cartridge_event,tags=['cartridge','remove_cartridge',payload.id.hex()])
 
     return True
-
-
-def _get_erc20_balance(wallet_addr: str, contract_addr: str) -> int:
-    entry = (
-        helpers
-        .select(e for e in dapp_wallet.Erc20
-                if e.address == contract_addr.lower()
-                and e.wallet.owner == wallet_addr.lower())
-        .first()
-    )
-
-    if entry is None:
-        return 0
-
-    amount_str = entry.amount
-    if amount_str.startswith('0x'):
-        amount_str = amount_str[2:]
-    amount = int(amount_str, 16)
-    return amount
 
 
 @mutation()
@@ -669,3 +656,53 @@ def get_prices_supply_for_cartridge(cartridge: Cartridge):
     )
 
     return sell, buy, fees, total_supply
+
+
+def _get_erc20_balance(wallet_addr: str, contract_addr: str) -> int:
+    entry = (
+        helpers
+        .select(e for e in dapp_wallet.Erc20
+                if e.address == contract_addr.lower()
+                and e.wallet.owner == wallet_addr.lower())
+        .first()
+    )
+
+    if entry is None:
+        return 0
+
+    amount_str = entry.amount
+    if amount_str.startswith('0x'):
+        amount_str = amount_str[2:]
+    amount = int(amount_str, 16)
+    return amount
+
+
+def _add_cartridge_price_to_treasury(cartridge: InsertCartridgePayload):
+    wallet = dapp_wallet.get_wallet(AppSettings.treasury_addr)
+    entry = (
+        wallet.erc20
+        .select(lambda e: e.address == AppSettings.token_addr.lower())
+        .first()
+    )
+    balance = 0
+    if entry is not None:
+        balance_str = entry.amount
+        if balance_str.startswith('0x'):
+            balance_str = balance_str[2:]
+            balance = int(balance_str, 16)
+
+    upload_price = get_upload_price(
+        cartridge_bytes=len(cartridge.data),
+        initial_supply=cartridge.initial_supply,
+    )
+    upload_price = int(upload_price * 10**AppSettings.token_decimals)
+
+    balance = int(balance + upload_price)
+    if entry is not None:
+        entry.amount = hex(balance)
+    else:
+        entry = dapp_wallet.Erc20(
+            wallet=wallet,
+            address=AppSettings.token_addr.lower(),
+            amount=hex(balance)
+        )
