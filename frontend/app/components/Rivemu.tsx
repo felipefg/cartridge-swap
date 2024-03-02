@@ -2,7 +2,6 @@
 
 
 import React, { useContext, useState, useEffect, cache } from 'react'
-import Script from "next/script";
 import Image from 'next/image';
 import {Parser} from 'expr-eval';
 import CloseIcon from '@mui/icons-material/Close';
@@ -315,7 +314,7 @@ function Rivemu() {
 
 
     return (
-        <div>
+        <>
         <section className='gameplay-section' hidden={selectedCartridge?.cartridgeData==undefined}>
             <div className='relative bg-gray-500 p-2 text-center'>
                 {
@@ -370,10 +369,9 @@ function Rivemu() {
                     {coverFallback()}
                 </div>
             </div>
-            <Script src="/rivemu.js?" strategy="lazyOnload" />
         </section>
         <div className="opacity-60 fixed inset-0 z-0 bg-black" onClick={() => close()}></div>
-        </div>
+        </>
     )
 }
 

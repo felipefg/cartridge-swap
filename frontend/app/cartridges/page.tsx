@@ -3,6 +3,7 @@ import CartridgesList from "../components/CartridgesList";
 import CartridgeInfo from "../components/CartridgeInfo";
 import Rivemu from "../components/Rivemu";
 import { Suspense } from "react";
+import Script from "next/script";
 
 
 
@@ -36,6 +37,7 @@ export default async function Cartridges() {
 		</section>
 
 		<Rivemu />
+        <Script src="/rivemu.js?" strategy="lazyOnload" />
       </main>
     )
   }
