@@ -160,25 +160,25 @@ def initialize_data():
     except Exception as e:
         LOGGER.warning(e)
 
-    # try:
-    #     cartridge_example_file = open('misc/freedoom.sqfs', 'rb')
-    #     cartridge_example_data = cartridge_example_file.read()
-    #     cartridge_example_file.close()
-    #     cartridge_payload = InsertCartridgePayload(
-    #         base_price=10,
-    #         initial_supply=1000,
-    #         smoothing_factor=50,
-    #         exponent=1500,
-    #         data=cartridge_example_data
-    #     )
-    #     create_cartridge(
-    #         cartridge_payload,
-    #         msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
-    #     )
-    #     if AppSettings.rivemu_path is None:
-    #         os.remove('misc/freedoom.sqfs')
-    # except Exception as e:
-    #     LOGGER.warning(e)
+    try:
+        cartridge_example_file = open('misc/freedoom.sqfs', 'rb')
+        cartridge_example_data = cartridge_example_file.read()
+        cartridge_example_file.close()
+        cartridge_payload = InsertCartridgePayload(
+            base_price=10,
+            initial_supply=1000,
+            smoothing_factor=50,
+            exponent=1500,
+            data=cartridge_example_data
+        )
+        create_cartridge(
+            cartridge_payload,
+            msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
+        )
+        if AppSettings.rivemu_path is None:
+            os.remove('misc/freedoom.sqfs')
+    except Exception as e:
+        LOGGER.warning(e)
 
     try:
         cartridge_example_file = open('misc/antcopter.sqfs', 'rb')
@@ -234,6 +234,25 @@ def initialize_data():
         )
         if AppSettings.rivemu_path is None:
             os.remove('misc/2048.sqfs')
+    except Exception as e:
+        LOGGER.warning(e)
+
+    try:
+        cartridge_example_file = open('misc/tetrix.sqfs', 'rb')
+        cartridge_example_data = cartridge_example_file.read()
+        cartridge_payload = InsertCartridgePayload(
+            base_price=25 * USDC_UNIT,
+            initial_supply=100,
+            smoothing_factor=1280,
+            exponent=1700,
+            data=cartridge_example_data
+        )
+        create_cartridge(
+            cartridge_payload,
+            msg_sender="0x22442796b72802Df82eFBa755c4135e960DB3F47"
+        )
+        if AppSettings.rivemu_path is None:
+            os.remove('misc/tetrix.sqfs')
     except Exception as e:
         LOGGER.warning(e)
 
